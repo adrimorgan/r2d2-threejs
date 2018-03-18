@@ -58,15 +58,6 @@ class TheScene extends THREE.Scene {
     this.spotLight.shadow.mapSize.width=2048
     this.spotLight.shadow.mapSize.height=2048;
     this.add (this.spotLight);
-
-    // EXAMEN
-      this.luzFocal = new THREE.SpotLight( 0xffffff, 0.7 );
-      this.luzFocal.position.set( -30, 30, 20 );
-      this.luzFocal.castShadow = true;
-      this.luzFocal.shadow.mapSize.width=2048;
-      this.luzFocal.shadow.mapSize.height=2048;
-      this.add(this.luzFocal);
-    // FIN EXAMEN
   }
   
   /// It creates the geometric model: crane and ground
@@ -75,7 +66,7 @@ class TheScene extends THREE.Scene {
    */
   createModel () {
     var model = new THREE.Object3D()
-    this.crane = new R2D2({});
+    this.crane = new Crane({});
     model.add (this.crane);
     var loader = new THREE.TextureLoader();
     var textura = loader.load ("imgs/wood.jpg");

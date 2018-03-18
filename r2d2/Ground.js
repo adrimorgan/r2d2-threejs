@@ -1,3 +1,14 @@
+
+/// The Ground class
+/**
+ * @author FVelasco
+ * 
+ * @param aWidth - The width of the ground
+ * @param aDeep - The deep of the ground
+ * @param aMaterial - The material of the ground
+ * @param aBoxSize - The size for the boxes
+ */
+
 class Ground extends THREE.Object3D {
 
   constructor (aWidth, aDeep, aMaterial, aBoxSize) {

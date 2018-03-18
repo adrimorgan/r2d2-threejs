@@ -37,12 +37,12 @@ function createGUI (withStats) {
     };
     this.takeBox  = false;
   }
-
+  
   var gui = new dat.GUI();
   var axisLights = gui.addFolder ('Axis and Lights');
     axisLights.add(GUIcontrols, 'axis').name('Axis on/off :');
     axisLights.add(GUIcontrols, 'lightIntensity', 0, 1.0).name('Light intensity :');
-
+  
   var actions = gui.addFolder ('Actions');
     var addingBoxes = actions.add(GUIcontrols, 'addBox').name (': Adding boxes :');
     var movingBoxes = actions.add (GUIcontrols, 'moveBox').name (': Move and rotate boxes :');
@@ -52,21 +52,21 @@ function createGUI (withStats) {
         newHeight = scene.takeBox();
           if (newHeight > 0) {
               GUIcontrols.height = newHeight;
-              GUIcontrols.takeBox = true;
+              GUIcontrols.takeBox = true; 
           } else {
-              GUIcontrols.takeBox = false;
+              GUIcontrols.takeBox = false;  
           }
         } else {
           scene.dropBox ();
         }
     });
-
+  
   var craneControls = gui.addFolder ('Crane Controls');
     craneControls.add (GUIcontrols, 'rotation', 0, 12, 0.001).name('Rotation :');
     craneControls.add (GUIcontrols, 'distance', 0, 50, 0.1).name('Distance :');
     craneControls.add (GUIcontrols, 'height', 0, 50, 0.1).name('Height :').listen();
     // The method  listen()  allows the height attribute to be written, not only read
-
+  
   if (withStats)
     stats = initStats();
 }
@@ -76,18 +76,18 @@ function createGUI (withStats) {
  * @return The statistics object
  */
 function initStats() {
-
+  
   var stats = new Stats();
-
+  
   stats.setMode(0); // 0: fps, 1: ms
-
+  
   // Align top-left
   stats.domElement.style.position = 'absolute';
   stats.domElement.style.left = '0px';
   stats.domElement.style.top = '0px';
-
+  
   $("#Stats-output").append( stats.domElement );
-
+  
   return stats;
 }
 
@@ -107,7 +107,7 @@ function onMouseDown (event) {
   if (event.ctrlKey) {
     // The Trackballcontrol only works if Ctrl key is pressed
     scene.getCameraControls().enabled = true;
-  } else {
+  } else {  
     scene.getCameraControls().enabled = false;
     if (event.button === 0) {   // Left button
       mouseDown = true;
@@ -176,7 +176,7 @@ function onMouseWheel (event) {
   if (event.ctrlKey) {
     // The Trackballcontrol only works if Ctrl key is pressed
     scene.getCameraControls().enabled = true;
-  } else {
+  } else {  
     scene.getCameraControls().enabled = false;
     if (mouseDown) {
       switch (applicationMode) {
@@ -203,17 +203,17 @@ function createRenderer () {
   renderer.setClearColor(new THREE.Color(0xEEEEEE), 1.0);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
-  return renderer;
+  return renderer;  
 }
 
 /// It renders every frame
 function render() {
   requestAnimationFrame(render);
-
+  
   stats.update();
   scene.getCameraControls().update ();
   scene.animate(GUIcontrols);
-
+  
   renderer.render(scene, scene.getCamera());
 }
 
@@ -230,10 +230,10 @@ $(function () {
   window.addEventListener ("mouseup", onMouseUp, true);
   window.addEventListener ("mousewheel", onMouseWheel, true);   // For Chrome an others
   window.addEventListener ("DOMMouseScroll", onMouseWheel, true); // For Firefox
-
+  
   // create a scene, that will hold all our elements such as objects, cameras and lights.
   scene = new TheScene (renderer.domElement);
-
+ 
   createGUI(true);
 
   render();
