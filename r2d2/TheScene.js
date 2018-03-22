@@ -14,7 +14,7 @@ class TheScene extends THREE.Scene {
     this.spotLight = null;
     this.camera = null;
     this.trackballControls = null;
-    this.crane = null;
+    this.r2d2 = null;
     this.ground = null;
   
     this.createLights ();
@@ -60,14 +60,14 @@ class TheScene extends THREE.Scene {
     this.add (this.spotLight);
   }
   
-  /// It creates the geometric model: crane and ground
+  /// It creates the geometric model: r2d2 and ground
   /**
    * @return The model
    */
   createModel () {
     var model = new THREE.Object3D()
-    this.crane = new Crane({});
-    model.add (this.crane);
+    this.r2d2 = new R2D2({});
+    model.add (this.r2d2);
     var loader = new THREE.TextureLoader();
     var textura = loader.load ("imgs/wood.jpg");
     this.ground = new Ground (300, 300, new THREE.MeshPhongMaterial ({map: textura}), 4);
@@ -77,47 +77,6 @@ class TheScene extends THREE.Scene {
   
   // Public methods
 
-  /// It adds a new box, or finish the action
-  /**
-   * @param event - Mouse information
-   * @param action - Which action is requested to be processed: start adding or finish.
-   */
-  addBox (event, action) {
-    this.ground.addBox(event, action);
-  }
-  
-  /// It moves or rotates a box on the ground
-  /**
-   * @param event - Mouse information
-   * @param action - Which action is requested to be processed: select a box, move it, rotate it or finish the action.
-   */
-  moveBox (event, action) {
-    this.ground.moveBox (event, action);
-  }
-  
-  /// The crane can take a box
-  /**
-   * @return The new height of the hook, on the top of the taken box. Zero if no box is taken
-   */
-  takeBox () { 
-    var box = this.ground.takeBox (this.crane.getHookPosition());
-    if (box === null)
-      return 0; 
-    else 
-      return this.crane.takeBox (box); 
-    // The retuned height set the new limit to down the hook
-  }
-  
-  /// The crane drops its taken box
-  dropBox () {
-    var box = this.crane.dropBox ();
-    if (box !== null) {
-      box.position.copy (this.crane.getHookPosition());
-      box.position.y = 0;
-      this.ground.dropBox (box);
-    }
-  }
-  
   /// It sets the crane position according to the GUI
   /**
    * @controls - The GUI information
@@ -125,7 +84,6 @@ class TheScene extends THREE.Scene {
   animate (controls) {
     this.axis.visible = controls.axis;
     this.spotLight.intensity = controls.lightIntensity;
-    this.crane.setHookPosition (controls.rotation, controls.distance, controls.height);
   }
   
   /// It returns the camera

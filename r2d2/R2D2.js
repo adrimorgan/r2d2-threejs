@@ -14,7 +14,7 @@ class R2D2 extends THREE.Object3D {
     super();
 
     //Parametros para las dimensiones del robot
-    this.height = (parameters.height === undefined ? 50 : parameters.height);
+    this.height = (parameters.height === undefined ? 25 : parameters.height);
     this.width = this.height/2;
     this.material = (parameters.material === undefined ?
         new THREE.MeshPhongMaterial ({color: 0xd4af37, specular: 0xfbf804, shininess: 70}) : this.material);
@@ -25,7 +25,7 @@ class R2D2 extends THREE.Object3D {
     this.rightArm = null;
     this.leftArm = null;
 
-    //Dimensiones de los pies del robot
+    //Dimensiones de los pies
     this.footHeight = this.height*0.1;
     this.footTopRadius = this.width*0.075;
     this.footBottomRadius = this.width*0.15;
@@ -37,14 +37,6 @@ class R2D2 extends THREE.Object3D {
     //Dimensiones de los hombros
     this.shoulderDims = this.width*0.15;
 
-
-    //Creacion de los dos brazos
-    this.rightArm = this.createShoulder();
-    this.leftArm = this.createShoulder();
-    this.leftArm.position.x = this.width;
-
-    this.add(this.rightArm);
-    this.add(this.leftArm);
     this.trunk = this.createBody();
     this.add(this.head);
     this.add(this.trunk);
@@ -93,12 +85,20 @@ class R2D2 extends THREE.Object3D {
     //lente (cilindro)
     var len = new THREE.Mesh(new THREE.CylinderGeometry(this.armRadius, this.armRadius, 1, 16,32),this.material);
     len.geometry.applyMatrix (new THREE.Matrix4().makeRotationY (Math.PI / 180));
-    len.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (0, this.height,10));
+    len.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (this.width/2, this.height,10));
 
     //cabeza (semiesfera)
     this.head = new THREE.Mesh(new THREE.SphereGeometry(this.width/2.5,32,32),this.material);
     this.head.geometry.applyMatrix (new THREE.Matrix4().makeTranslation (this.width/2, this.height/1.3,0));
     this.head.add(len);
+
+    //Creacion de los dos brazos
+    this.rightArm = this.createShoulder();
+    this.leftArm = this.createShoulder();
+    this.leftArm.position.x = this.width;
+
+    this.add(this.rightArm);
+    this.add(this.leftArm);
 
     //tronco (cilindro)
     this.trunk = new THREE.Mesh(
@@ -109,3 +109,20 @@ class R2D2 extends THREE.Object3D {
   }
 
 }
+
+/*
+  crear R2D2:
+    - crear brazos completos:
+      - crear pies completos:
+      - crear hombro+brazo:
+        - crear hombro.
+        - crear brazo.
+    - crear tronco+cabeza completos:
+
+
+1) cabeza = new Mesh(esf, m)
+2) cuerpo = new Mesh(cilin, m)
+3) cuerpo.rotation.x = __
+4) cabeza.position.y = __
+5) cuerpo.add(cabeza)
+*/
