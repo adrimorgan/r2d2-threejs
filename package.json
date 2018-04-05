@@ -1,0 +1,37 @@
+{
+  "name": "practicassg",
+  "version": "1.0.0",
+  "description": "La práctica 2 consistirá en realizar un juego cuyo protagonista será una copia barata de R2D2, el personaje de Star Wars.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "set NODE_ENV=0&& webpack-dev-server --progress --color --hot",
+    "build": "run-s clean build:dir build:js",
+    "clean": "rimraf build",
+    "build:dir": "copyfiles -u 1 src/public/**/* build/",
+    "build:js": "set NODE_ENV=1&& webpack --progress --color"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrianmorente/PracticasSG.git"
+  },
+  "author": "Arthur Rodríguez & Adrián Morente",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adrianmorente/PracticasSG/issues"
+  },
+  "homepage": "https://github.com/adrianmorente/PracticasSG#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "copyfiles": "^2.0.0",
+    "npm-run-all": "^4.1.2",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.13",
+    "webpack-dev-server": "^3.1.1"
+  },
+  "dependencies": {
+    "dat.gui": "^0.7.1",
+    "three": "^0.91.0"
+  }
+}
