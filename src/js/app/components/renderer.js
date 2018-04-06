@@ -1,24 +1,18 @@
 import * as THREE from 'three';
-import Config from '../config';
 
-export default class Renderer{
+export default class Renderer extends THREE.WebGLRenderer {
 
-  constructor(scene, canvas){
-    this.scene = scene;
-    this.canvas = canvas;
-    this.threeRenderer = new THREE.WebGLRenderer({antialias: true});
-    canvas.appendChild(this.threeRenderer.domElement);
-    this.updateSize();
-    document.addEventListener('DOMContentLoaded', () => this.updateSize(), false);
-    window.addEventListener('resize', () => this.updateSize(), false);
+  constructor(){
+    super();
+    this.renderer = new THREE.WebGLRenderer();
+    this.renderer.setClearColor(new THREE.Color(0xEEEEEE), 1.0);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.shadowMap.enabled = true;
+    this.add(this.renderer);
   }
 
-  updateSize(){
-    this.threeRenderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
-  }
-
-  render(scene, camera){
-    this.threeRenderer.render(scene, camera);
+  render(){
+    super.render();
   }
 
 }

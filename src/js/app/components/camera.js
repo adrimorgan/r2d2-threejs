@@ -1,20 +1,17 @@
 import * as THREE from 'three';
-import Config from '../config';
 
-export default class Camera {
+export default class Camera extends THREE.Camera {
 
-  constructor(renderer){
-    const width = renderer.domElement.width;
-    const height = renderer.domElement.height;
-    this.threeCamera = new THREE.PerspectiveCamera(Config.camera.fov, width/height, Config.camera.near, Config.camera.far);
-    this.threeCamera.position.set(Config.camera.posX, Config.camera.posY, Config.camera.posZ);
-    this.updateSize(renderer);
-    window.addEventListener('resize', () => this.updateSize(renderer), false);
-  }
-
-  updateSize(renderer){
-    this.threeCamera.aspect = renderer.domElement.width / renderer.domElement.height;
-    this.threeCamera.updateProjectionMatrix();
+  constructor(){
+    super();
+    this.camera = new THREE.PerspectiveCamera(
+      fov = 45,
+      aspect = window.innerWidth / window.innerHeight,
+      near = 0.1,
+      far = 1000
+    );
+    this.camera.lookAt(new THREE.Vector3(0, 20, 0));
+    this.add(this.camera);
   }
 
 }

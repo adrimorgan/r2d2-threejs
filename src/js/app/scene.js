@@ -1,25 +1,34 @@
-// global imports
 import * as THREE from 'three';
-import DatGUI from 'dat.gui';
-
-// local imports
 import Camera from './components/camera';
 import Light from './components/light';
-import Renderer from './components/renderer';
+import Ground from './components/ground';
+//import {MetallicImage} from '../../public/assets/img/metallic.jpg';
 
-export default class Scene {
+export default class Scene extends THREE.Scene {
 
-  constructor(canvas){
-    this.canvas = canvas;
-    this.scene = new THREE.Scene();
-    this.renderer = new Renderer(this.scene, canvas);
-    this.camera = new Camera(this.renderer.threeRenderer);
-    this.light = new Light(this.scene);
+  constructor(renderer){
+    super();
+
+    // cámara en perspectiva
+    this.camera = new Camera();
+    this.add(this.camera);
+
+    // luz ambiental
+    this.ambientLight = new Light('ambient');
+    this.add(this.ambientLight);
+
+    // modelo suelo
+    this.ground = new Ground(
+      width = 300,
+      material = new THREE.MeshPhongMaterial(
+        { map: new THREE.TextureLoader().load('../../public/assets/img/metallic.jpg') }
+      ),
+      boxSize = 4
+    );
+    this.add(this.ground);
+
+    // modelo r2d2
+    //this.r2d2 = new R2D2(...);
+    //this.add(this.r2d2);
   }
-
-  render(){
-    this.renderer.render(this.scene, this.camera.threeCamera);
-    requestAnimationFrame(this.render.bind(this));
-  }
-
 }
