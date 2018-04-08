@@ -1,34 +1,75 @@
 import * as THREE from 'three';
-import Camera from './components/camera';
-import Light from './components/light';
-import Ground from './components/ground';
-//import {MetallicImage} from '../../public/assets/img/metallic.jpg';
+import Light from './components/Light';
+import Ground from './components/Ground';
+import R2D2 from './components/R2D2';
 
+/**
+ * Clase Scene: agrupa los elementos de
+ * iluminacion, una camara simple y un objeto
+ * que representa la superficie sobre la que se
+ * trabajará.
+ */
 export default class Scene extends THREE.Scene {
 
   constructor(renderer){
     super();
 
-    // cámara en perspectiva
-    this.camera = new Camera();
-    this.add(this.camera);
+    //Datos miembro
+    this.ambientLight = null;
+    this.camera = null;
+    this.ground = null;
 
-    // luz ambiental
+    //Luz ambiental
     this.ambientLight = new Light('ambient');
     this.add(this.ambientLight);
 
-    // modelo suelo
-    this.ground = new Ground(
-      width = 300,
-      material = new THREE.MeshPhongMaterial(
-        { map: new THREE.TextureLoader().load('../../public/assets/img/metallic.jpg') }
-      ),
-      boxSize = 4
-    );
-    this.add(this.ground);
+    //Ejes de referencia
+    this.axis = new THREE.AxesHelper (20);
+    this.add (this.axis);
 
-    // modelo r2d2
-    //this.r2d2 = new R2D2(...);
-    //this.add(this.r2d2);
+    //Aqui iria la declaracion de la textura para el suelo
+    //......
+    //
+
+    //Objeto que representa la superficie
+    this.ground = new Ground(100,100, new THREE.MeshBasicMaterial({color:0xffb200}));
+    this.add(this.ground);
+    this.createCamera(renderer);
+    this.add(this.camera);
+
+    //Añadimos el objeto R2D2
+    this.robot = new R2D2(10,7,1,1,1);
+    this.add(this.robot);
+  }
+
+
+  /**
+   * Metodo createCamara
+   * Crea un objeto de tipo camara en perspectiva
+   * y lo situa en el espacio con una direccion
+   * Lo ideal sería utilizar la clase Camera pero
+   * no he conseguido que funcione (la clase Ground externa
+   * SI que funciona)
+   */
+  createCamera (renderer) {
+
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.camera.position.set (0, 10, 50);
+    var look = new THREE.Vector3 (0,0,0);
+    this.camera.lookAt(look);
+
+    // this.trackballControls = new THREE.TrackballControls(this.camera, renderer);
+    // this.trackballControls.rotateSpeed = 5;
+    // this.trackballControls.zoomSpeed = -2;
+    // this.trackballControls.panSpeed = 0.5;
+    // this.trackballControls.target = look;
+  }
+
+  /**
+   * Devuelve un objeto Camera para ser utilizado por el renderer
+   * @returns {null|THREE.PerspectiveCamera}
+   */
+  getCamera(){
+    return this.camera;
   }
 }

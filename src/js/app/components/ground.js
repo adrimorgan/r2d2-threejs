@@ -1,32 +1,24 @@
 import * as THREE from 'three';
 
+/**
+ * Clase Ground: representa la superficie
+ * de apoyo donde se desarrollaran las acciones
+ */
 export default class Ground extends THREE.Object3D {
 
-    constructor(width, material, boxSize){
+    constructor(aWidth,aDepth, material){
         super();
-        this.width = width;
+
+        //Datos miembro
+        this.width = aWidth;
+        this.height = 0.2
+        this.depth = aDepth;
         this.material = material;
-        this.boxSize = boxSize;
 
-        // creación del plano
+        // Creación del plano que representa el suelo
         this.ground = new THREE.Mesh(
-            new THREE.BoxGeometry(
-                width = this.width,
-                height = 0.2,
-                depth = this.width,
-                widthSegments = 1
-            ), 
-            this.material
-        );
-
-        // posicionamiento sobre el plano X
-        this.ground.applyMatrix(
-            new THREE.Matrix4().makeTranslation(
-                x = 0,
-                y = -0.1,
-                z = 0
-            )
-        );
+            new THREE.BoxGeometry(this.width,this.height,this.depth),
+            this.material);
 
         this.ground.receiveShadow = true;
         this.ground.matrixAutoUpdate = false;

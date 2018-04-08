@@ -1,9 +1,24 @@
-import Scene from './app/scene';
+import * as THREE from 'three';
+import Scene from './app/Scene'
 
-// Lee el objeto lienzo del HTML, crea la escena en él y lanza el programa
-function run() {
-  var canvas = document.getElementById('canvas');
-  new Scene(canvas);
+function createRenderer(){
+
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setClearColor(new THREE.Color(0xD2FAF9),1.0); //background color
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.shadowMap.enabled = true;
+  document.body.appendChild( renderer.domElement );
+  return renderer;
 }
 
-run();
+
+var animate = function () {
+    requestAnimationFrame( animate );
+    renderer.render(scene, scene.getCamera());
+}
+
+
+var renderer = createRenderer();
+var scene = new Scene(renderer.domElement);
+animate();
+
