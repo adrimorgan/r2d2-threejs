@@ -18,4 +18,5 @@ function render () {
 
 var renderer = createRenderer();
 var scene = new Scene(renderer.domElement);
+
 render();

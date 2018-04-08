@@ -25,7 +25,7 @@ export default class Scene extends THREE.Scene {
     this.add(this.ambientLight);
 
     //Ejes de referencia
-    this.axis = new THREE.AxisHelper (20);
+    this.axis = new THREE.AxesHelper (20);
     this.add (this.axis);
 
     //Aqui iria la declaracion de la textura para el suelo
@@ -76,7 +76,7 @@ export default class Scene extends THREE.Scene {
   }
 
   animate(){
-    this.robot.setPosition();
     this.trackballControls.update();
+    this.robot.animate();
   }
 }
