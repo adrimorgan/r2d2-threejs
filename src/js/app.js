@@ -11,14 +11,14 @@ function createRenderer(){
   return renderer;
 }
 
-
-var animate = function () {
-    requestAnimationFrame( animate );
+function render () {
+    requestAnimationFrame( render );
     renderer.render(scene, scene.getCamera());
+    scene.animate();
 }
 
 
 var renderer = createRenderer();
 var scene = new Scene(renderer.domElement);
-animate();
+render();
 

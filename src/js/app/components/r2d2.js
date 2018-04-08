@@ -18,9 +18,18 @@ export default class R2D2 extends THREE.Object3D {
     constructor(refHeight,refWidth, alpha, beta,gamma){
         super();
 
-        //Datos miembro
+        //Datos miembro: partes del brazo por
+        //separado
+        this.rightShoulder = null;
+        this.leftShoulder = null;
         this.rightArm = null;
         this.leftArm = null;
+        this.rightFoot = null;
+        this.leftFoot = null;
+
+        //Brazos completos
+        this.wholeRightArm = null;
+
         this.armHeigth = refHeight;
         this.bodyWidth = refWidth;
         this.bottomFootRadius = 0.3*refWidth;
@@ -28,52 +37,55 @@ export default class R2D2 extends THREE.Object3D {
         this.footHeight = 0.3*refHeight;
 
         //Creacion de los brazos
-        this.leftArm = this.createArm();
-        //Separamos la anchura del cuerpo
-        this.leftArm.applyMatrix(new THREE.Matrix4().makeTranslation (this.bodyWidth, 0, 0));
-        //El derecho se crea centrado en el origen
-        this.rightArm = this.createArm();
-        this.add(this.rightArm);
-        this.add(this.leftArm);
+        this.wholeRightArm = this.createRightArm();
+        this.add(this.wholeRightArm);
 
     }
 
-    createArm(){
+    createRightArm(){
 
         //Pie del robot: tronco de cono
-        var foot = new THREE.Mesh(
+        this.rightFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius,this.bottomFootRadius,this.footHeight,32,32,1),
             new THREE.MeshBasicMaterial({color:0x0000ee}));
 
         //Para apoyarlo sobre la superficie del suelo hay que trasladar la geometria del mismo
-        foot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.footHeight/2, 0));
-        foot.castShadow = true;
-        foot.matrixAutoUpdate = false;
+        this.rightFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.footHeight/2, 0));
+        this.rightFoot.castShadow = true;
+        this.rightFoot.matrixAutoUpdate = false;
+        this.rightFoot.position.y = 0;
 
-        var arm = new THREE.Mesh(
+        this.rightArm = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius,this.topFootRadius,this.armHeigth),
             new THREE.MeshBasicMaterial({color:0xff00ee}));
 
         //Para apoyarlo sobre el pie
-        arm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.armHeigth/2 + this.footHeight, 0));
-        arm.castShadow = true;
-        arm.matrixAutoUpdate = false;
+        this.rightArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.armHeigth/2 + this.footHeight, 0));
+        this.rightArm.castShadow = true;
+        this.rightArm.matrixAutoUpdate = false;
+        this.rightArm.scale.y = 1;
+        this.rightFoot.add(this.rightArm)
 
         //Hombro
-        var shoulder = new THREE.Mesh(
+        this.rightShoulder = new THREE.Mesh(
             new THREE.BoxGeometry(0.2*this.bodyWidth,0.2*this.bodyWidth,0.2*this.bodyWidth),
             new THREE.MeshBasicMaterial({color:0x00ff00}));
 
         //Trasladarlo justo encima del brazo
         var traslacion = 0.1*this.bodyWidth + this.footHeight + this.armHeigth;
-        shoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, traslacion, 0));
-        shoulder.castShadow = true;
-        shoulder.matrixAutoUpdate = false;
-        arm.add(foot);
-        arm.add(shoulder);
+        this.rightShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, traslacion, 0));
+        this.rightShoulder.castShadow = true;
+        this.rightShoulder.matrixAutoUpdate = false;
 
-        return arm;
+        //Creacion del modelo
+        this.rightFoot.add(this.rightShoulder);
+        return this.rightFoot;
 
+    }
+
+    setPosition(){
+        this.rightArm.scale.y = 1.5;
+        this.rightArm.updateMatrix();
     }
 }
 

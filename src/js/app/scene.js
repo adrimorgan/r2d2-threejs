@@ -72,4 +72,9 @@ export default class Scene extends THREE.Scene {
   getCamera(){
     return this.camera;
   }
+
+  animate(){
+
+    this.robot.setPosition();
+  }
 }
