@@ -33,7 +33,6 @@
   "dependencies": {
     "dat.gui": "^0.7.1",
     "three": "^0.91.0",
-    "three-trackballcontrols": "0.0.7",
-    "three.trackball": "0.0.1"
+    "three-trackballcontrols": "0.0.7"
   }
 }

@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import Light from './components/Light';
-import Ground from './components/Ground';
-import R2D2 from './components/R2D2';
+import * as TrackballControls from 'three-trackballcontrols';
+import Light from './components/light';
+import Ground from './components/ground';
+import R2D2 from './components/r2d2';
 
 /**
  * Clase Scene: agrupa los elementos de
@@ -24,7 +25,7 @@ export default class Scene extends THREE.Scene {
     this.add(this.ambientLight);
 
     //Ejes de referencia
-    this.axis = new THREE.AxesHelper (20);
+    this.axis = new THREE.AxisHelper (20);
     this.add (this.axis);
 
     //Aqui iria la declaracion de la textura para el suelo
@@ -45,24 +46,23 @@ export default class Scene extends THREE.Scene {
 
   /**
    * Metodo createCamara
-   * Crea un objeto de tipo camara en perspectiva
-   * y lo situa en el espacio con una direccion
+   * Crea un objeto de tipo cámara en perspectiva
+   * y lo sitúa en el espacio con una dirección
    * Lo ideal sería utilizar la clase Camera pero
    * no he conseguido que funcione (la clase Ground externa
    * SI que funciona)
    */
   createCamera (renderer) {
-
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     this.camera.position.set (0, 10, 50);
     var look = new THREE.Vector3 (0,0,0);
     this.camera.lookAt(look);
 
-    // this.trackballControls = new THREE.TrackballControls(this.camera, renderer);
-    // this.trackballControls.rotateSpeed = 5;
-    // this.trackballControls.zoomSpeed = -2;
-    // this.trackballControls.panSpeed = 0.5;
-    // this.trackballControls.target = look;
+    this.trackballControls = new TrackballControls(this.camera, renderer);
+    this.trackballControls.rotateSpeed = 5;
+    this.trackballControls.zoomSpeed = -2;
+    this.trackballControls.panSpeed = 0.5;
+    this.trackballControls.target = look;
   }
 
   /**
@@ -74,7 +74,7 @@ export default class Scene extends THREE.Scene {
   }
 
   animate(){
-
     this.robot.setPosition();
+    this.trackballControls.update();
   }
 }

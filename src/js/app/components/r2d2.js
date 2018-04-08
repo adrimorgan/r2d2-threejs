@@ -15,7 +15,7 @@ export default class R2D2 extends THREE.Object3D {
      * @param beta angulo giro de la cabeza (80º como maximo)
      * @param gamma escalado no mayor del 20% de la altura original
      */
-    constructor(refHeight,refWidth, alpha, beta,gamma){
+    constructor(refHeight, refWidth, alpha, beta, gamma){
         super();
 
         //Datos miembro: partes del brazo por
@@ -80,7 +80,6 @@ export default class R2D2 extends THREE.Object3D {
         //Creacion del modelo
         this.rightFoot.add(this.rightShoulder);
         return this.rightFoot;
-
     }
 
     setPosition(){
