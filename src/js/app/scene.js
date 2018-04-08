@@ -59,9 +59,11 @@ export default class Scene extends THREE.Scene {
     this.camera.lookAt(look);
 
     this.trackballControls = new TrackballControls(this.camera, renderer);
-    this.trackballControls.rotateSpeed = 5;
-    this.trackballControls.zoomSpeed = -2;
-    this.trackballControls.panSpeed = 0.5;
+    this.trackballControls.minDistance = 25;
+    this.trackballControls.maxDistance = 150;
+    this.trackballControls.rotateSpeed = 2;
+    this.trackballControls.zoomSpeed = 2;
+    this.trackballControls.panSpeed = 0.25;
     this.trackballControls.target = look;
   }
 
