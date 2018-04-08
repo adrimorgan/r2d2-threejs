@@ -13,7 +13,7 @@ export default class R2D2 extends THREE.Object3D {
      * @param refWidth anchura de referencia del cuerpo
      * @param alpha angulo balanceo (35º hacia delante, 45º hacia atras
      * @param beta angulo giro de la cabeza (80º como maximo)
-     * @param gamma escalado no mayor del 20% de la altura original
+     * @param gamma escalado de brazos no mayor del 20% de la altura original
      */
     constructor(refHeight, refWidth, alpha, beta, gamma){
         super();
@@ -40,10 +40,19 @@ export default class R2D2 extends THREE.Object3D {
         this.wholeRightArm = this.createRightArm();
         this.add(this.wholeRightArm);
 
+        document.addEventListener('keydown', function (event) {
+            switch (event.code) {
+                case 'KeyA':
+                    this.armHeigth += 3;
+                    break;
+                case 'KeyS':
+                    this.armHeigth -= 3;
+                    break;
+            }
+        }, false);
     }
 
     createRightArm(){
-
         //Pie del robot: tronco de cono
         this.rightFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius,this.bottomFootRadius,this.footHeight,32,32,1),
@@ -63,8 +72,7 @@ export default class R2D2 extends THREE.Object3D {
         this.rightArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.armHeigth/2 + this.footHeight, 0));
         this.rightArm.castShadow = true;
         this.rightArm.matrixAutoUpdate = false;
-        this.rightArm.scale.y = 1;
-        this.rightFoot.add(this.rightArm)
+        this.rightFoot.add(this.rightArm);
 
         //Hombro
         this.rightShoulder = new THREE.Mesh(
@@ -83,8 +91,11 @@ export default class R2D2 extends THREE.Object3D {
     }
 
     setPosition(){
-        this.rightArm.scale.y = 1.5;
-        this.rightArm.updateMatrix();
+        this.setArmsHeight(height);
+        this.setBodyWidth(width);
+        this.setBodySwing(swing);
+        this.setHeadRotation(rotation);
+        this.setArmsHeight(height);
     }
 }
 
