@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as TrackballControls from 'three-trackballcontrols';
 import Light from './components/light';
-import Ground from './components/ground';
+import GameCourt from './components/GameCourt';
 import R2D2 from './components/r2d2';
 
 /**
@@ -34,7 +34,7 @@ export default class Scene extends THREE.Scene {
     this.add(this.spotLight );
 
     //Objeto que representa la superficie
-    this.ground = new Ground(100,700, new THREE.MeshPhongMaterial(
+    this.ground = new GameCourt(100,700, new THREE.MeshPhongMaterial(
       { color: 0x101010, specular: 0x777777, shininess: 70 })
     );
     this.add(this.ground);
