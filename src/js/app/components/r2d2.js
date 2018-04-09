@@ -47,38 +47,30 @@ export default class R2D2 extends THREE.Object3D {
         this.add(this.rightFoot);
         this.add(this.leftFoot);
 
-        window.addEventListener('keydown', function(event){
-            switch(event.code){
-                case 'ArrowUp':
-                    this.rightFoot.
-                    break;
-                case 'ArrowDown':
-                    alert('flecha abajo');
-                    break;
-                case 'ArrowRight':
-                    break;
-                case 'ArrowLeft':
-                    break;
-            }
-        }, true);
+        window.addEventListener("keydown", this.walk, false);
     }
 
     createFeet(){
         //Creación del pie derecho y traslacion para apoyarlo sobre el plano X
         this.rightFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.bottomFootRadius, this.footHeight,32,32,1),
-            new THREE.MeshPhongMaterial({color:0x0000ff, specular: 0x000eee, shininess:70}));
+            new THREE.MeshBasicMaterial({color:0x0000ee}));
         this.rightFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.footHeight/2, 0));
         this.rightFoot.castShadow = true;
         this.rightFoot.matrixAutoUpdate = false;
+        this.rightFoot.position.x -= (this.bodyWidth+this.shoulderWidth)/2;
+        this.rightFoot.updateMatrix();
 
         //Creación del pie izauierdo: lo trasladamos tambien en el eje X
         this.leftFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.bottomFootRadius, this.footHeight,32,32,1),
-            new THREE.MeshPhongMaterial({color:0x0000ff, specular: 0x000eee, shininess:70}));
+            new THREE.MeshBasicMaterial({color:0x0000ee}));
         this.leftFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (this.bodyWidth+this.shoulderWidth, this.footHeight/2, 0));
         this.leftFoot.castShadow = true;
         this.leftFoot.matrixAutoUpdate = false;
+        this.leftFoot.position.x -= (this.bodyWidth+this.shoulderWidth)/2;
+        this.leftFoot.updateMatrix();
+
 
         //Creación de los brazos: serán añadidos como hijos de esta geometria
         this.createArms();
@@ -91,7 +83,7 @@ export default class R2D2 extends THREE.Object3D {
         //la altura del pie que le corresponda
         this.rightArm = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius,this.topFootRadius,this.armHeight),
-            new THREE.MeshPhongMaterial({color:0xffffff, specular: 0x000eee, shininess:70}));
+            new THREE.MeshBasicMaterial({color:0xffffff}));
 
         this.rightArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.armHeight/2, 0));
         this.rightArm.castShadow = true;
@@ -102,7 +94,7 @@ export default class R2D2 extends THREE.Object3D {
         //Creación del brazo izquierdo de la misma forma
         this.leftArm = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius,this.topFootRadius,this.armHeight),
-            new THREE.MeshPhongMaterial({color:0xffffff, specular: 0x000eee, shininess:70}));
+            new THREE.MeshBasicMaterial({color:0xffffff}));
 
         this.leftArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (this.bodyWidth+this.shoulderWidth, this.armHeight/2, 0));
         this.leftArm.castShadow = true;
@@ -122,7 +114,7 @@ export default class R2D2 extends THREE.Object3D {
         //desplazamos hasta estar encima del brazo
         this.rightShoulder = new THREE.Mesh(
             new THREE.BoxGeometry(this.shoulderWidth,this.shoulderWidth,this.shoulderWidth),
-            new THREE.MeshPhongMaterial({color:0x0000ff, specular: 0x000eee, shininess:70}));
+            new THREE.MeshBasicMaterial({color:0x0000ff}));
 
         this.rightShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.shoulderWidth*0.5, 0));
         //Trasladarlo justo encima del brazo
@@ -134,7 +126,7 @@ export default class R2D2 extends THREE.Object3D {
         //Hombro derecho
         this.leftShoulder = new THREE.Mesh(
             new THREE.BoxGeometry(this.shoulderWidth,this.shoulderWidth,this.shoulderWidth),
-            new THREE.MeshPhongMaterial({color:0x0000ff, specular: 0x000eee, shininess:70}));
+            new THREE.MeshBasicMaterial({color:0x0000ff}));
 
         this.leftShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (this.bodyWidth+this.shoulderWidth, this.bodyWidth*0.1, 0));
         //Trasladarlo justo encima del brazo
@@ -154,8 +146,7 @@ export default class R2D2 extends THREE.Object3D {
         //se realice con respecto a estos
         this.body = new THREE.Mesh(
             new THREE.CylinderGeometry(this.bodyWidth/2,this.bodyWidth/2,this.armHeight+this.shoulderWidth,32,32),
-            new THREE.MeshPhongMaterial({color:0xc0c0c0, specular: 0x000eee, shininess:70}));
-        this.body.castShadow = true;
+            new THREE.MeshBasicMaterial({color:0xc0c0c0}));
 
         //Trasladamos el cuerpo un poco mas abajo de la mitad de su altura para que
         //se ajuste mejor a los hombros
@@ -173,11 +164,36 @@ export default class R2D2 extends THREE.Object3D {
         this.head.position.y += 1.9*this.shoulderWidth;
         this.head.rotation.y = 0;
         var robotEye = new THREE.Mesh(new THREE.CylinderGeometry(this.shoulderWidth/2,this.shoulderWidth/2,this.shoulderWidth,32,32),
-            new THREE.MeshPhongMaterial({color:0xff0000, specular: 0x000eee, shininess:70}));
-        this.head.castShadow = true;
+            new THREE.MeshBasicMaterial({color:0xff0000}));
         robotEye.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI/2));
         robotEye.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,this.bodyWidth/4,this.bodyWidth/2.5));
         this.head.add(robotEye);
+    }
+
+    computeKey(event){
+        switch(event.code){
+            case 'ArrowUp':
+                this.position.z += 1;
+                break;
+            case 'ArrowDown':
+                this.position.z -= 1;
+                break;
+            case 'ArrowLeft':
+                this.rotation.y += 0.2;
+                break;
+            case 'ArrowRight':
+                this.rotation.y -= 0.2;
+                break;
+            case 'KeyA':
+                this.body.rotation.x += 0.2;
+                break;
+            case 'KeyS':
+                this.body.rotation.x -= 0.2;
+                break;            
+            default:
+                alert('Letra no reconocida');
+                break;
+        }
     }
 
     animate(){
@@ -199,12 +215,14 @@ export default class R2D2 extends THREE.Object3D {
         //PD: GUAPO :3
         //_______________________________________________________________________
         
-        //this.body.rotation.x += 0.1;
-        //this.body.updateMatrix();
+        // this.body.rotation.x += 0.1;
+        // this.body.updateMatrix();
         //this.head.rotation.y = Math.PI/2;
         //this.head.updateMatrix();
     }
 }
+
+
 
 
 
