@@ -17,6 +17,7 @@ export default class Scene extends THREE.Scene {
 
     //Datos miembro
     this.ambientLight = null;
+    this.spotLight = null;
     this.camera = null;
     this.ground = null;
 
@@ -24,12 +25,16 @@ export default class Scene extends THREE.Scene {
     this.ambientLight = new Light('ambient');
     this.add(this.ambientLight);
 
+    // //Luz direccional
+    this.spotLight = new Light('spot');
+    this.add(this.spotLight);
+
     //Ejes de referencia
     this.axis = new THREE.AxesHelper (20);
     this.add (this.axis);
 
     //Aqui iria la declaracion de la textura para el suelo
-    //......
+    //......              pero como no, pues no.
     //
 
     //Objeto que representa la superficie
@@ -54,7 +59,7 @@ export default class Scene extends THREE.Scene {
    */
   createCamera (renderer) {
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    this.camera.position.set (0, 10, 50);
+    this.camera.position.set (0, 30, 50);
     var look = new THREE.Vector3 (0,0,0);
     this.camera.lookAt(look);
 
