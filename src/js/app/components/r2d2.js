@@ -47,20 +47,7 @@ export default class R2D2 extends THREE.Object3D {
         this.add(this.rightFoot);
         this.add(this.leftFoot);
 
-        window.addEventListener('keydown', function(event){
-            switch(event.code){
-                case 'ArrowUp':
-                    this.rightFoot.
-                    break;
-                case 'ArrowDown':
-                    alert('flecha abajo');
-                    break;
-                case 'ArrowRight':
-                    break;
-                case 'ArrowLeft':
-                    break;
-            }
-        }, true);
+        window.addEventListener("keydown", this.walk, false);
     }
 
     createFeet(){
@@ -71,6 +58,8 @@ export default class R2D2 extends THREE.Object3D {
         this.rightFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.footHeight/2, 0));
         this.rightFoot.castShadow = true;
         this.rightFoot.matrixAutoUpdate = false;
+        this.rightFoot.position.x -= (this.bodyWidth+this.shoulderWidth)/2;
+        this.rightFoot.updateMatrix();
 
         //Creación del pie izauierdo: lo trasladamos tambien en el eje X
         this.leftFoot = new THREE.Mesh(
@@ -79,6 +68,9 @@ export default class R2D2 extends THREE.Object3D {
         this.leftFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (this.bodyWidth+this.shoulderWidth, this.footHeight/2, 0));
         this.leftFoot.castShadow = true;
         this.leftFoot.matrixAutoUpdate = false;
+        this.leftFoot.position.x -= (this.bodyWidth+this.shoulderWidth)/2;
+        this.leftFoot.updateMatrix();
+
 
         //Creación de los brazos: serán añadidos como hijos de esta geometria
         this.createArms();
@@ -178,6 +170,32 @@ export default class R2D2 extends THREE.Object3D {
         this.head.add(robotEye);
     }
 
+    computeKey(event){
+        switch(event.code){
+            case 'ArrowUp':
+                this.position.z += 1;
+                break;
+            case 'ArrowDown':
+                this.position.z -= 1;
+                break;
+            case 'ArrowLeft':
+                this.rotation.y += 0.2;
+                break;
+            case 'ArrowRight':
+                this.rotation.y -= 0.2;
+                break;
+            case 'KeyA':
+                this.body.rotation.x += 0.2;
+                break;
+            case 'KeyS':
+                this.body.rotation.x -= 0.2;
+                break;            
+            default:
+                alert('Letra no reconocida');
+                break;
+        }
+    }
+
     animate(){
         // if(this.growingArms){
         //     this.rightArm.scale.y = 1.5;
@@ -197,12 +215,14 @@ export default class R2D2 extends THREE.Object3D {
         //PD: GUAPO :3
         //_______________________________________________________________________
         
-        this.body.rotation.x += 0.1;
-        this.body.updateMatrix();
+        // this.body.rotation.x += 0.1;
+        // this.body.updateMatrix();
         //this.head.rotation.y = Math.PI/2;
         //this.head.updateMatrix();
     }
 }
+
+
 
 
 

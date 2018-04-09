@@ -84,4 +84,8 @@ export default class Scene extends THREE.Scene {
     this.trackballControls.update();
     this.robot.animate();
   }
+
+  computeKey(event){
+    this.robot.computeKey(event);
+  }
 }

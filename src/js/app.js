@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import $ from 'jquery';
 import Scene from './app/scene';
 
 function createRenderer(){
@@ -16,7 +17,14 @@ function render () {
   scene.animate();
 }
 
+function computeKey(event){
+  scene.computeKey(event);
+}
+
 var renderer = createRenderer();
 var scene = new Scene(renderer.domElement);
-
 render();
+
+$(function() {
+  window.addEventListener('keydown', computeKey);
+});
