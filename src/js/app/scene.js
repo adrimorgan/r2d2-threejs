@@ -33,14 +33,6 @@ export default class Scene extends THREE.Scene {
     this.spotLight.shadow.mapSize.height = 1024;
     this.add(this.spotLight );
 
-    //Ejes de referencia
-    this.axis = new THREE.AxesHelper (20);
-    this.add (this.axis);
-
-    //Aqui iria la declaracion de la textura para el suelo
-    //......              pero como no, pues no.
-    //
-
     //Objeto que representa la superficie
     this.ground = new Ground(100,700, new THREE.MeshPhongMaterial(
       { color: 0x101010, specular: 0x777777, shininess: 70 })
