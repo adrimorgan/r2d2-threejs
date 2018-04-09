@@ -22,12 +22,17 @@ export default class Scene extends THREE.Scene {
     this.ground = null;
 
     //Luz ambiental
-    this.ambientLight = new Light('ambient');
+    this.ambientLight = new THREE.AmbientLight(0xccddee,0.85);
     this.add(this.ambientLight);
 
-    // //Luz direccional
-    this.spotLight = new Light('spot');
-    this.add(this.spotLight);
+    //Luz direccional
+    this.spotLight =  new THREE.SpotLight( 0xffffff );
+    this.spotLight.position.set( 0, 30, 10 );
+    this.spotLight.castShadow = true;
+    this.spotLight.shadow.mapSize.width = 1024;
+    this.spotLight.shadow.mapSize.height = 1024;
+
+    this.add(this.spotLight );
 
     //Ejes de referencia
     this.axis = new THREE.AxesHelper (20);
@@ -38,7 +43,8 @@ export default class Scene extends THREE.Scene {
     //
 
     //Objeto que representa la superficie
-    this.ground = new Ground(100,100, new THREE.MeshBasicMaterial({color:0xffb200}));
+    this.ground = new Ground(100,100, new THREE.MeshPhongMaterial(
+        {color:0xd0d0d0,specular:0xfbf804, shininess:70}));
     this.add(this.ground);
     this.createCamera(renderer);
     this.add(this.camera);
