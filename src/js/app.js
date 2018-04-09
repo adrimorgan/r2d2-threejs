@@ -3,8 +3,8 @@ import $ from 'jquery';
 import Scene from './app/scene';
 
 function createRenderer(){
-  var renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor(new THREE.Color(0x000000),1.0); //background color
+  var renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+  renderer.setClearColor(new THREE.Color(0x000000), 0); //background color
   renderer.setSize( window.innerWidth, window.innerHeight );
   renderer.shadowMap.enabled = true;
   document.body.appendChild( renderer.domElement );

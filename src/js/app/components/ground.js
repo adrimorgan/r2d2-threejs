@@ -6,7 +6,7 @@ import * as THREE from 'three';
  */
 export default class Ground extends THREE.Object3D {
 
-    constructor(aWidth,aDepth, material){
+    constructor(aWidth, aDepth, material){
         super();
 
         //Datos miembro
@@ -17,12 +17,13 @@ export default class Ground extends THREE.Object3D {
 
         // Creación del plano que representa el suelo
         this.ground = new THREE.Mesh(
-            new THREE.BoxGeometry(this.width,this.height,this.depth),
-            this.material);
+            new THREE.BoxGeometry(this.width, this.height, this.depth),
+            this.material
+        );
+        this.ground.applyMatrix(new THREE.Matrix4().makeTranslation(0, 0, (this.depth/2 - this.width/2)));
 
         this.ground.receiveShadow = true;
         this.ground.matrixAutoUpdate = false;
         this.add(this.ground);
     }
-
 }

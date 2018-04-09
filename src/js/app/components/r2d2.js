@@ -190,7 +190,6 @@ export default class R2D2 extends THREE.Object3D {
                 this.body.rotation.x -= 0.2;
                 break;            
             default:
-                alert('Letra no reconocida');
                 break;
         }
     }

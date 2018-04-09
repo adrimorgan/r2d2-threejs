@@ -22,16 +22,15 @@ export default class Scene extends THREE.Scene {
     this.ground = null;
 
     //Luz ambiental
-    this.ambientLight = new THREE.AmbientLight(0xccddee,0.85);
+    this.ambientLight = new THREE.AmbientLight(0xffffff,0.85);
     this.add(this.ambientLight);
 
     //Luz direccional
     this.spotLight =  new THREE.SpotLight( 0xffffff );
-    this.spotLight.position.set( 0, 30, 10 );
+    this.spotLight.position.set( 0, 30, -50 );
     this.spotLight.castShadow = true;
     this.spotLight.shadow.mapSize.width = 1024;
     this.spotLight.shadow.mapSize.height = 1024;
-
     this.add(this.spotLight );
 
     //Ejes de referencia
@@ -43,8 +42,9 @@ export default class Scene extends THREE.Scene {
     //
 
     //Objeto que representa la superficie
-    this.ground = new Ground(100,100, new THREE.MeshPhongMaterial(
-        {color:0xd0d0d0,specular:0xfbf804, shininess:70}));
+    this.ground = new Ground(100,700, new THREE.MeshPhongMaterial(
+      { color: 0x101010, specular: 0x777777, shininess: 70 })
+    );
     this.add(this.ground);
     this.createCamera(renderer);
     this.add(this.camera);
@@ -53,7 +53,6 @@ export default class Scene extends THREE.Scene {
     this.robot = new R2D2(10,7,1,1,1);
     this.add(this.robot);
   }
-
 
   /**
    * Metodo createCamara
@@ -65,13 +64,13 @@ export default class Scene extends THREE.Scene {
    */
   createCamera (renderer) {
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    this.camera.position.set (0, 30, 50);
-    var look = new THREE.Vector3 (0,0,0);
+    this.camera.position.set (0, 50, -70);
+    var look = new THREE.Vector3 (0,0,50);
     this.camera.lookAt(look);
 
     this.trackballControls = new TrackballControls(this.camera, renderer);
     this.trackballControls.minDistance = 25;
-    this.trackballControls.maxDistance = 150;
+    this.trackballControls.maxDistance = 250;
     this.trackballControls.rotateSpeed = 2;
     this.trackballControls.zoomSpeed = 2;
     this.trackballControls.panSpeed = 0.25;
