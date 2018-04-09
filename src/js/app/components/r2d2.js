@@ -39,8 +39,16 @@ export default class R2D2 extends THREE.Object3D {
         this.topFootRadius = 0.1*refWidth;
         this.footHeight = 0.3*refHeight;
 
-        //Variables de control de movimiento
-        this.growingArms = true;
+        //Variables de control de grados de libertad (los grados deben expresarse en radianes)
+            // La cabeza girará entre -80º y 80º (eje Y)
+        this.minHeadRotation = (-80 * Math.PI/180);
+        this.maxHeadRotation = (80 * Math.PI/180);
+            // El cuerpo se balanceará entre -45º y 30º (eje X)
+        this.minBodyRotation = (-45 * Math.PI/180);
+        this.maxBodyRotation = (30 * Math.PI/180);
+            // Los brazos podrán escalarse (solo en eje Y) hasta un 20% más
+        this.minArmsScale = 1;
+        this.maxArmsScale = 1.2;
 
         //Creación
         this.createFeet();
@@ -171,6 +179,48 @@ export default class R2D2 extends THREE.Object3D {
 
     computeKey(event){
         switch(event.code){
+            case 'KeyQ':    // rotar cabeza hacia la izquierda
+                if (this.head.rotation.y + 0.1 <= this.maxHeadRotation)
+                    this.head.rotation.y += 0.1;
+                break;
+            case 'KeyW':    // rotar cabeza hacia la derecha
+                if (this.head.rotation.y - 0.1 >= this.minHeadRotation)
+                    this.head.rotation.y -= 0.1;
+                break;
+            case 'KeyA':    // balancear cuerpo hacia atrás
+                if (this.body.rotation.x + 0.1 <= this.maxBodyRotation)
+                    this.body.rotation.x += 0.1;
+                break;
+            case 'KeyS':    // balancear cuerpo hacia adelante
+                if (this.body.rotation.x - 0.1 >= this.minBodyRotation)
+                    this.body.rotation.x -= 0.1;
+                break;
+            case 'KeyZ':    // disminuir escala brazos
+                if (this.rightArm.scale.y - 0.05 >= this.minArmsScale) {
+                    this.rightArm.scale.y -= 0.05;
+                    this.rightArm.updateMatrix();
+                    this.rightShoulder.position.y -= (0.05 * this.armHeight);
+                    this.rightShoulder.updateMatrix();
+                    this.leftArm.scale.y -= 0.05;
+                    this.leftArm.updateMatrix();
+                    this.leftShoulder.position.y -= (0.05 * this.armHeight);
+                    this.leftShoulder.updateMatrix();
+                }
+                break;
+            case 'KeyX':    // aumentar escala brazos
+                if (this.rightArm.scale.y + 0.05 <= this.maxArmsScale) {
+                    this.rightArm.scale.y += 0.05;
+                    this.rightArm.updateMatrix();
+                    this.rightShoulder.position.y += (0.05 * this.armHeight);
+                    this.rightShoulder.updateMatrix();
+                    this.leftArm.scale.y += 0.05;
+                    this.leftArm.updateMatrix();
+                    this.leftShoulder.position.y += (0.05 * this.armHeight);
+                    this.leftShoulder.updateMatrix();
+                }
+                break;
+
+            // teclas referentes al movimiento
             case 'ArrowUp':
                 this.position.z += 1;
                 break;
@@ -182,13 +232,7 @@ export default class R2D2 extends THREE.Object3D {
                 break;
             case 'ArrowRight':
                 this.rotation.y -= 0.2;
-                break;
-            case 'KeyA':
-                this.body.rotation.x += 0.2;
-                break;
-            case 'KeyS':
-                this.body.rotation.x -= 0.2;
-                break;            
+                break;         
             default:
                 break;
         }
