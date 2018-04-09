@@ -14,7 +14,7 @@ export default class Light extends THREE.Light{
       break;
   
     default: //ambient
-      this.light = new THREE.AmbientLight({color:0xccddee, intensity:0.35});
+      this.light = new THREE.AmbientLight({color:0xccddee, intensity:0.85});
       this.light.castShadow = true;
       break;
     }

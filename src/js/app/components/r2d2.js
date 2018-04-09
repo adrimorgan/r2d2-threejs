@@ -67,7 +67,7 @@ export default class R2D2 extends THREE.Object3D {
         //Creación del pie derecho y traslacion para apoyarlo sobre el plano X
         this.rightFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.bottomFootRadius, this.footHeight,32,32,1),
-            new THREE.MeshBasicMaterial({color:0x0000ee}));
+            new THREE.MeshPhongMaterial({color:0x0000ff, specular: 0x000eee, shininess:70}));
         this.rightFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.footHeight/2, 0));
         this.rightFoot.castShadow = true;
         this.rightFoot.matrixAutoUpdate = false;
@@ -75,7 +75,7 @@ export default class R2D2 extends THREE.Object3D {
         //Creación del pie izauierdo: lo trasladamos tambien en el eje X
         this.leftFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.bottomFootRadius, this.footHeight,32,32,1),
-            new THREE.MeshBasicMaterial({color:0x0000ee}));
+            new THREE.MeshPhongMaterial({color:0x0000ff, specular: 0x000eee, shininess:70}));
         this.leftFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (this.bodyWidth+this.shoulderWidth, this.footHeight/2, 0));
         this.leftFoot.castShadow = true;
         this.leftFoot.matrixAutoUpdate = false;
@@ -91,7 +91,7 @@ export default class R2D2 extends THREE.Object3D {
         //la altura del pie que le corresponda
         this.rightArm = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius,this.topFootRadius,this.armHeight),
-            new THREE.MeshBasicMaterial({color:0xffffff}));
+            new THREE.MeshPhongMaterial({color:0xffffff, specular: 0x000eee, shininess:70}));
 
         this.rightArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.armHeight/2, 0));
         this.rightArm.castShadow = true;
@@ -102,7 +102,7 @@ export default class R2D2 extends THREE.Object3D {
         //Creación del brazo izquierdo de la misma forma
         this.leftArm = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius,this.topFootRadius,this.armHeight),
-            new THREE.MeshBasicMaterial({color:0xffffff}));
+            new THREE.MeshPhongMaterial({color:0xffffff, specular: 0x000eee, shininess:70}));
 
         this.leftArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (this.bodyWidth+this.shoulderWidth, this.armHeight/2, 0));
         this.leftArm.castShadow = true;
@@ -122,7 +122,7 @@ export default class R2D2 extends THREE.Object3D {
         //desplazamos hasta estar encima del brazo
         this.rightShoulder = new THREE.Mesh(
             new THREE.BoxGeometry(this.shoulderWidth,this.shoulderWidth,this.shoulderWidth),
-            new THREE.MeshBasicMaterial({color:0x0000ff}));
+            new THREE.MeshPhongMaterial({color:0x0000ff, specular: 0x000eee, shininess:70}));
 
         this.rightShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (0, this.shoulderWidth*0.5, 0));
         //Trasladarlo justo encima del brazo
@@ -134,7 +134,7 @@ export default class R2D2 extends THREE.Object3D {
         //Hombro derecho
         this.leftShoulder = new THREE.Mesh(
             new THREE.BoxGeometry(this.shoulderWidth,this.shoulderWidth,this.shoulderWidth),
-            new THREE.MeshBasicMaterial({color:0x0000ff}));
+            new THREE.MeshPhongMaterial({color:0x0000ff, specular: 0x000eee, shininess:70}));
 
         this.leftShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation (this.bodyWidth+this.shoulderWidth, this.bodyWidth*0.1, 0));
         //Trasladarlo justo encima del brazo
@@ -154,7 +154,8 @@ export default class R2D2 extends THREE.Object3D {
         //se realice con respecto a estos
         this.body = new THREE.Mesh(
             new THREE.CylinderGeometry(this.bodyWidth/2,this.bodyWidth/2,this.armHeight+this.shoulderWidth,32,32),
-            new THREE.MeshBasicMaterial({color:0xc0c0c0}));
+            new THREE.MeshPhongMaterial({color:0xc0c0c0, specular: 0x000eee, shininess:70}));
+        this.body.castShadow = true;
 
         //Trasladamos el cuerpo un poco mas abajo de la mitad de su altura para que
         //se ajuste mejor a los hombros
@@ -172,7 +173,8 @@ export default class R2D2 extends THREE.Object3D {
         this.head.position.y += 1.9*this.shoulderWidth;
         this.head.rotation.y = 0;
         var robotEye = new THREE.Mesh(new THREE.CylinderGeometry(this.shoulderWidth/2,this.shoulderWidth/2,this.shoulderWidth,32,32),
-            new THREE.MeshBasicMaterial({color:0xff0000}));
+            new THREE.MeshPhongMaterial({color:0xff0000, specular: 0x000eee, shininess:70}));
+        this.head.castShadow = true;
         robotEye.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI/2));
         robotEye.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,this.bodyWidth/4,this.bodyWidth/2.5));
         this.head.add(robotEye);
@@ -197,8 +199,8 @@ export default class R2D2 extends THREE.Object3D {
         //PD: GUAPO :3
         //_______________________________________________________________________
         
-        this.body.rotation.x += 0.1;
-        this.body.updateMatrix();
+        //this.body.rotation.x += 0.1;
+        //this.body.updateMatrix();
         //this.head.rotation.y = Math.PI/2;
         //this.head.updateMatrix();
     }
