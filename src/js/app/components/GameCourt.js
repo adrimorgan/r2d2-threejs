@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 
 /**
- * Clase Ground: representa la superficie
+ * Clase GameCourt: representa la superficie
  * de apoyo donde se desarrollaran las acciones
  */
-export default class Ground extends THREE.Object3D {
+export default class GameCourt extends THREE.Object3D {
 
     constructor(aWidth, aDepth, material){
         super();

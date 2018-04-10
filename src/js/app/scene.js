@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import * as TrackballControls from 'three-trackballcontrols';
-import Light from './components/light';
 import GameCourt from './components/GameCourt';
 import R2D2 from './components/r2d2';
+import OVO from './components/ObjetoVolador';
 
 /**
  * Clase Scene: agrupa los elementos de
@@ -19,7 +19,15 @@ export default class Scene extends THREE.Scene {
     this.ambientLight = null;
     this.spotLight = null;
     this.camera = null;
-    this.ground = null;
+    this.gameCourt = null;
+    this.gameCourtWidth = 200;
+    this.gameCourtLength = 700;
+    this.OVOS = null;
+    this.timeout = 1000;
+    this.countOVOS = 20;
+    this.ovosBu = this.countOVOS * 0.2;
+    this.countOvosMaCreated = 0;
+    this.countOvosBuCreated = 0;
 
     //Luz ambiental
     this.ambientLight = new THREE.AmbientLight(0xffffff,0.85);
@@ -34,25 +42,28 @@ export default class Scene extends THREE.Scene {
     this.add(this.spotLight );
 
     //Objeto que representa la superficie
-    this.ground = new GameCourt(100,700, new THREE.MeshPhongMaterial(
+    this.gameCourt = new GameCourt(this.gameCourtWidth,this.gameCourtLength, new THREE.MeshPhongMaterial(
       { color: 0x101010, specular: 0x777777, shininess: 70 })
     );
-    this.add(this.ground);
+    this.add(this.gameCourt);
     this.createCamera(renderer);
     this.add(this.camera);
 
     //Añadimos el objeto R2D2
     this.robot = new R2D2(10,7,1,1,1);
     this.add(this.robot);
+
+    //Los objetos voladores se crearán
+    //cada cierto intervalo de tiempo
+    this.OVOS = new THREE.Object3D();
+    this.add(this.OVOS);
+    this.timerOvoCreation = setInterval(this.createOvo, this.timeout);
   }
 
   /**
    * Metodo createCamara
    * Crea un objeto de tipo cámara en perspectiva
    * y lo sitúa en el espacio con una dirección
-   * Lo ideal sería utilizar la clase Camera pero
-   * no he conseguido que funcione (la clase Ground externa
-   * SI que funciona)
    */
   createCamera (renderer) {
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -69,6 +80,30 @@ export default class Scene extends THREE.Scene {
     this.trackballControls.target = look;
   }
 
+  createOvo(){
+
+    if(this.countOvosMaCreated+this.countOvosBuCreated < this.countOVOS){
+
+      var objectType =  'OvoMa';
+      if(this.countOvosBuCreated < this.ovosBu)
+        objectType = Math.random() <= 0.2 ? 'OvoBu':'OvoMa';
+
+      if(this.countOvosBuCreated < this.ovosBu &&
+          this.countOVOS-(this.countOvosMaCreated+this.countOvosBuCreated) <= this.ovosBu){
+          objectType = 'OvoBu';
+      }
+
+      objectType == 'OvoBu'? this.countOvosBuCreated+=1 : this.countOvosMaCreated+=1;
+      var positionX = Math.random()*this.gameCourtWidth/2 + 1;
+      var positionZ = Math.random()*this.gameCourtLength + 600;
+      var position = new THREE.Vector3(positionX,0,positionZ);
+      var velocidad = Math.random()+3;
+
+      this.OVOS.add(new OVO(objectType,velocidad,position));
+    }
+
+  }
+
   /**
    * Devuelve un objeto Camera para ser utilizado por el renderer
    * @returns {null|THREE.PerspectiveCamera}
@@ -77,9 +112,16 @@ export default class Scene extends THREE.Scene {
     return this.camera;
   }
 
+  animateOVOS(){
+    this.OVOS.children.forEach(function(ovo){
+       ovo.animate();
+    })
+  }
+
   animate(){
     this.trackballControls.update();
     this.robot.animate();
+    this.animateOVOS();
   }
 
   computeKey(event){
