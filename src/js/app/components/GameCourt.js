@@ -21,7 +21,6 @@ export default class GameCourt extends THREE.Object3D {
             this.material
         );
         this.ground.applyMatrix(new THREE.Matrix4().makeTranslation(0, 0, (this.depth/2 - this.width/2)));
-
         this.ground.receiveShadow = true;
         this.ground.matrixAutoUpdate = false;
         this.add(this.ground);

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import $ from 'jquery';
-import Scene from './app/scene';
+import Scene from './app/Scene';
 
 function createRenderer(){
   var renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
@@ -21,8 +21,18 @@ function computeKey(event){
   scene.computeKey(event);
 }
 
+function createOvos(){
+  scene.createOvo();
+
+  if(scene.countOvosBuCreated + scene.countOvosMaCreated >= scene.countOVOS){
+        console.log('OUT!!!');
+        window.clearInterval(intervalo);
+    }
+}
+
 var renderer = createRenderer();
 var scene = new Scene(renderer.domElement);
+var intervalo = window.setInterval(createOvos,scene.timeout);
 render();
 
 $(function() {

@@ -3,6 +3,7 @@ import * as TrackballControls from 'three-trackballcontrols';
 import GameCourt from './components/GameCourt';
 import R2D2 from './components/r2d2';
 import OVO from './components/ObjetoVolador';
+import metalImg from '../../public/assets/images/gameCourt.jpg';
 
 /**
  * Clase Scene: agrupa los elementos de
@@ -20,8 +21,8 @@ export default class Scene extends THREE.Scene {
     this.spotLight = null;
     this.camera = null;
     this.gameCourt = null;
-    this.gameCourtWidth = 200;
-    this.gameCourtLength = 700;
+    this.gameCourtWidth = 800;
+    this.gameCourtLength = 800;
     this.OVOS = null;
     this.timeout = 1000;
     this.countOVOS = 20;
@@ -42,8 +43,10 @@ export default class Scene extends THREE.Scene {
     this.add(this.spotLight );
 
     //Objeto que representa la superficie
+    var loader = new THREE.TextureLoader();
+    var gameCourtTexture = loader.load(metalImg);
     this.gameCourt = new GameCourt(this.gameCourtWidth,this.gameCourtLength, new THREE.MeshPhongMaterial(
-      { color: 0x101010, specular: 0x777777, shininess: 70 })
+      {map:gameCourtTexture})
     );
     this.add(this.gameCourt);
     this.createCamera(renderer);
