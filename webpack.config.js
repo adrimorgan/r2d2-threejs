@@ -53,6 +53,16 @@ module.exports = {
         },
         include: include,
         exclude: nodeModules,
+      },
+      {
+        test: /\.(png|jp(e*)g|svg)$/, //Para cualquier fichero con esta extension
+        use: [{
+            loader: 'url-loader', //utilizar este loader (imagenes)
+            options: {
+                limit: 8000, // Convert images < 8kb to base64 strings
+                name: 'src/public/assets/images/[hash]-[name].[ext]'
+            }
+        }]
       }
     ]
   },
