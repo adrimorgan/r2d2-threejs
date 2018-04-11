@@ -39,6 +39,10 @@ export default class R2D2 extends THREE.Object3D {
         this.topFootRadius = 0.1*refWidth;
         this.footHeight = 0.3*refHeight;
 
+        //Variables de control del movimiento
+        this.stepSize = 10;
+        this.rotationDegrees = (15 * Math.PI/180);
+
         //Variables de control de grados de libertad (los grados deben expresarse en radianes)
             // La cabeza girará entre -80º y 80º (eje Y)
         this.minHeadRotation = (-80 * Math.PI/180);
@@ -222,45 +226,38 @@ export default class R2D2 extends THREE.Object3D {
 
             // teclas referentes al movimiento
             case 'ArrowUp':
-                this.position.z += 1;
+                var deltaX = Math.floor(Math.sin(this.rotation.y) * this.stepSize);
+                var deltaZ = Math.floor(Math.cos(this.rotation.y) * this.stepSize);
+                this.position.x += deltaX;
+                // if(this.rotation.y >= (JUGAR CON LOS PUTOS RADIANES PARA CONTROLAR LA MIRADA))
+                //     this.position.z -= deltaZ;
+                // else
+                    this.position.z += deltaZ;
+                console.log(this.rotation.y);
                 break;
             case 'ArrowDown':
-                this.position.z -= 1;
+                var deltaX = Math.floor(Math.sin(this.rotation.y) * this.stepSize);
+                var deltaZ = Math.floor(Math.cos(this.rotation.y) * this.stepSize);
+                this.position.x -= deltaX;
+                // if (this.rotation.y >= (JUGAR CON LOS PUTOS RADIANES PARA CONTROLAR LA MIRADA))
+                //     this.position.z += deltaZ;
+                // else
+                this.position.z -= deltaZ;
+                console.log(this.rotation.y);
                 break;
             case 'ArrowLeft':
-                this.rotation.y += 0.2;
+                this.rotateY(this.rotationDegrees);
+                console.log(this.rotation.y);
                 break;
             case 'ArrowRight':
-                this.rotation.y -= 0.2;
-                break;         
-            default:
+                this.rotateY(-this.rotationDegrees);
+                console.log(this.rotation.y);
                 break;
         }
     }
 
     animate(){
-        // if(this.growingArms){
-        //     this.rightArm.scale.y = 1.5;
-        //     this.rightArm.updateMatrix();
-        //     this.rightShoulder.position.y = this.rightArm.position.y;
-        //     this.rightShoulder.updateMatrix();
-        // } else {
-            
-        // }
-
-        //_______________________________________________________________________
-        //AQUI PRUEBA "A MANO" LOS DISTINTOS GRADOS DE LIBERTAD
-        //CUANDO SE ESCALE UN BRAZO, HAY QUE ESCALAR EL OTRO TAMBIEN, POR LO QUE
-        //HABRA QUE TRASLADAR AMBOS HOMBROS. PUEDE QUE HAYA ALGUNA FORMA DE HACER LA
-        //HERENCIA DE FORMA QUE CUANDO SE APLIQUE UN ESCALADO AL BRAZO DERECHO, SE APLIQUE
-        //DE FORMA AUTOMATICA AL IZQUIERDO, PERO NO SE COMO XD
-        //PD: GUAPO :3
-        //_______________________________________________________________________
         
-        // this.body.rotation.x += 0.1;
-        // this.body.updateMatrix();
-        //this.head.rotation.y = Math.PI/2;
-        //this.head.updateMatrix();
     }
 }
 
