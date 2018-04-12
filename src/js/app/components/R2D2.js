@@ -228,15 +228,10 @@ export default class R2D2 extends THREE.Object3D {
 
     createHeadLight(){
 
-        // //Creamos la luz focal con un grado de inclinacion de 30º
-        // //sobre el ojo del robot, como si fuera una luz de casco de minero
-        // var lightPositionY = this.footHeight+this.armHeight + this.bodyWidth;
-        // var lightPositionZ = -10;
-        // this.headLight = new Light('spot',0xff0000,0.85, new THREE.Vector3(0,20,this.bodyWidth*20));
-        // var lightTarget = new THREE.Object3D();
-        // lightTarget.position.set(0, 20, -this.bodyWidth*20);
-        // this.headLight.light.target = lightTarget;
-        // this.eye.add(this.headLight);
+        //Creamos la luz focal con un grado de inclinacion de 30º
+        //sobre el ojo del robot, como si fuera una luz de casco de minero
+        this.headLight = new Light('spot',0xff0000,0.85, new THREE.Vector3(0,40,this.bodyWidth*2));
+        this.eye.add(this.headLight);
     }
 
     computeKey(event){

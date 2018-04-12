@@ -4,6 +4,7 @@ import GameCourt from './components/GameCourt';
 import R2D2 from './components/R2D2';
 import OVO from './components/ObjetoVolador';
 import metalImg from '../../public/assets/images/gameCourt.jpg';
+import Light from "./components/Light";
 
 /**
  * Clase Scene: agrupa los elementos de
@@ -17,8 +18,8 @@ export default class Scene extends THREE.Scene {
     super();
 
     //Datos miembro
-    this.ambientLight = null;
-    this.spotLight = null;
+    this.sceneAmbientLight = null;
+    this.sceneSpotlight = null;
     this.camera = null;
     this.gameCourt = null;
     this.gameCourtWidth = 800;
@@ -30,30 +31,25 @@ export default class Scene extends THREE.Scene {
     this.countOvosMaCreated = 0;
     this.countOvosBuCreated = 0;
 
-    //Luz ambiental
-    this.ambientLight = new THREE.AmbientLight(0xffffff,0.85);
-    this.add(this.ambientLight);
+    //Luz ambiental de la escena
+    this.sceneAmbientLight = new Light('ambient');
+    this.add(this.sceneAmbientLight);
 
-    //Luz direccional
-    this.spotLight =  new THREE.SpotLight( 0xffffff );
-    this.spotLight.position.set( 0, 30, -50 );
-    this.spotLight.castShadow = true;
-    this.spotLight.shadow.mapSize.width = 1024;
-    this.spotLight.shadow.mapSize.height = 1024;
-    this.add(this.spotLight );
+    //Luz direccional de la escena
+    this.sceneSpotlight = new Light('spot',0xffffff,0.2,new THREE.Vector3(0,30,-30));
+    this.add(this.sceneSpotlight);
 
     //Objeto que representa la superficie
     var loader = new THREE.TextureLoader();
     var gameCourtTexture = loader.load(metalImg);
     this.gameCourt = new GameCourt(this.gameCourtWidth,this.gameCourtLength, new THREE.MeshPhongMaterial(
-      {map:gameCourtTexture})
-    );
+      {map:gameCourtTexture}));
     this.add(this.gameCourt);
     this.createCamera(renderer);
     this.add(this.camera);
 
     //Añadimos el objeto R2D2
-    this.robot = new R2D2(10,7,1,1,1);
+    this.robot = new R2D2(20,14,1,1,1);
     this.add(this.robot);
 
     //Los objetos voladores se crearán
@@ -99,7 +95,7 @@ export default class Scene extends THREE.Scene {
       var positionX = Math.random()*this.gameCourtWidth/2 + 1;
       var positionZ = Math.random()*this.gameCourtLength + 600;
       var position = new THREE.Vector3(positionX,0,positionZ);
-      var velocidad = Math.random()+3;
+      var velocidad = Math.random()+2;
 
       this.OVOS.add(new OVO(objectType,velocidad,position));
     }
@@ -126,6 +122,7 @@ export default class Scene extends THREE.Scene {
   }
 
   computeKey(event){
-    this.robot.computeKey(event);
+      this.robot.updateMatrixWorld();
+      this.robot.computeKey(event);
   }
 }

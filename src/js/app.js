@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import $ from 'jquery';
 import Scene from './app/Scene';
+import Light from './app/components/Light'
 
 
 function createRenderer(){
