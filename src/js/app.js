@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import $ from 'jquery';
 import Scene from './app/Scene';
-import Light from './app/components/Light'
 
 
 function createRenderer(){
@@ -15,11 +14,16 @@ function createRenderer(){
 
 function render () {
   requestAnimationFrame( render );
-  renderer.render(scene, scene.getCamera());
+  renderer.render(scene, scene.getActiveCamera());
   scene.animate();
 }
 
 function computeKey(event){
+  if(event.code == 'KeyV'){
+    scene.changeActiveCamera();
+  }
+
+
   scene.computeKey(event);
 }
 
@@ -38,5 +42,5 @@ var intervalo = window.setInterval(createOvos,scene.timeout);
 render();
 
 $(function() {
-  window.addEventListener('keydown', computeKey);
+    window.addEventListener('keydown', computeKey);
 });

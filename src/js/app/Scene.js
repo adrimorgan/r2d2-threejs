@@ -5,6 +5,7 @@ import R2D2 from './components/R2D2';
 import OVO from './components/ObjetoVolador';
 import metalImg from '../../public/assets/images/gameCourt.jpg';
 import Light from "./components/Light";
+import Camera from "./components/Camera";
 
 /**
  * Clase Scene: agrupa los elementos de
@@ -20,7 +21,9 @@ export default class Scene extends THREE.Scene {
     //Datos miembro
     this.sceneAmbientLight = null;
     this.sceneSpotlight = null;
-    this.camera = null;
+    this.thirdPersonCamera = null;
+    this.firstPersonCamera = null;
+    this.activeCamera = null;
     this.gameCourt = null;
     this.gameCourtWidth = 800;
     this.gameCourtLength = 800;
@@ -36,7 +39,7 @@ export default class Scene extends THREE.Scene {
     this.add(this.sceneAmbientLight);
 
     //Luz direccional de la escena
-    this.sceneSpotlight = new Light('spot',0xffffff,0.2,new THREE.Vector3(0,30,-30));
+    this.sceneSpotlight = new Light('spot',0xffffff,0.2,new THREE.Vector3(0,35,-35));
     this.add(this.sceneSpotlight);
 
     //Objeto que representa la superficie
@@ -45,12 +48,19 @@ export default class Scene extends THREE.Scene {
     this.gameCourt = new GameCourt(this.gameCourtWidth,this.gameCourtLength, new THREE.MeshPhongMaterial(
       {map:gameCourtTexture}));
     this.add(this.gameCourt);
-    this.createCamera(renderer);
-    this.add(this.camera);
+
+    //Camara de tercera persona (perspectiva)
+    this.createThirdPersonCamera(renderer);
+    this.add(this.thirdPersonCamera);
+    this.activeCamera = 'TPC';
 
     //Añadimos el objeto R2D2
     this.robot = new R2D2(20,14,1,1,1);
     this.add(this.robot);
+
+    //Creamos la camara de primera persona
+    this.createFirstPersonCamera();
+    this.robot.head.add(this.firstPersonCamera);
 
     //Los objetos voladores se crearán
     //cada cierto intervalo de tiempo
@@ -63,19 +73,26 @@ export default class Scene extends THREE.Scene {
    * Crea un objeto de tipo cámara en perspectiva
    * y lo sitúa en el espacio con una dirección
    */
-  createCamera (renderer) {
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    this.camera.position.set (0, 50, -70);
-    var look = new THREE.Vector3 (0,0,50);
-    this.camera.lookAt(look);
+  createThirdPersonCamera (renderer) {
 
-    this.trackballControls = new TrackballControls(this.camera, renderer);
+    var lookAt = new THREE.Vector3(0,0,50);
+    this.thirdPersonCamera = new Camera(75, window.innerWidth/window.innerHeight,1, 1000, new THREE.Vector3(0,50,-70),lookAt);
+
+    this.trackballControls = new TrackballControls(this.thirdPersonCamera.camera, renderer);
     this.trackballControls.minDistance = 25;
     this.trackballControls.maxDistance = 250;
     this.trackballControls.rotateSpeed = 2;
     this.trackballControls.zoomSpeed = 2;
     this.trackballControls.panSpeed = 0.25;
-    this.trackballControls.target = look;
+    this.trackballControls.target = lookAt;
+  }
+
+  createFirstPersonCamera(){
+
+    var lookAt = new THREE.Vector3(0, this.robot.totalHeight-this.robot.bodyWidth*2,this.robot.bodyWidth*2);
+    this.firstPersonCamera = new Camera(
+        75,window.innerWidth/window.innerHeight,1,1000,
+        new THREE.Vector3(0,this.robot.totalHeight-this.robot.bodyWidth*2,this.robot.bodyWidth/2),lookAt);
   }
 
   createOvo(){
@@ -104,10 +121,18 @@ export default class Scene extends THREE.Scene {
 
   /**
    * Devuelve un objeto Camera para ser utilizado por el renderer
-   * @returns {null|THREE.PerspectiveCamera}
    */
-  getCamera(){
-    return this.camera;
+  getActiveCamera(){
+
+    if(this.activeCamera == 'TPC')
+      return this.thirdPersonCamera.getCamera();
+
+    else
+      return this.firstPersonCamera.getCamera();
+  }
+
+  changeActiveCamera(){
+    this.activeCamera = (this.activeCamera == 'TPC'? 'FPC': 'TPC');
   }
 
   animateOVOS(){

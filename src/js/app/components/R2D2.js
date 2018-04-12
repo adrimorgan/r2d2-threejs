@@ -47,6 +47,7 @@ export default class R2D2 extends THREE.Object3D {
         this.bottomFootRadius = 0.3*refWidth;
         this.topFootRadius = 0.1*refWidth;
         this.footHeight = 0.3*refHeight;
+        this.totalHeight = this.footHeight+this.armHeight+this.shoulderWidth+this.bodyWidth;
 
         //Variable de control del movimiento
         this.rotationDegrees = (15 * Math.PI/180);
@@ -218,8 +219,7 @@ export default class R2D2 extends THREE.Object3D {
             new THREE.MeshPhongMaterial({ color: 0xff0000, specular: 0x000eee, shininess: 70 }));
         this.head.castShadow = true;
         this.eye.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
-        this.eye.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, this.bodyWidth / 4, 0));
-        this.eye.position.z = this.bodyWidth/2.5;
+        this.eye.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, this.bodyWidth / 4, this.bodyWidth/2.5));
         this.eye.rotation.y = 0;
         //Creamos la luz que sale del ojo del robot
         this.createHeadLight();
@@ -230,7 +230,19 @@ export default class R2D2 extends THREE.Object3D {
 
         //Creamos la luz focal con un grado de inclinacion de 30º
         //sobre el ojo del robot, como si fuera una luz de casco de minero
-        this.headLight = new Light('spot',0xff0000,0.85, new THREE.Vector3(0,40,this.bodyWidth*2));
+        var lightPositionY = this.footHeight+this.armHeight+this.bodyWidth;
+        var lightPositionZ = this.bodyWidth/2;
+        this.headLight = new Light('spot',0xff0000,1.5, new THREE.Vector3(0,lightPositionY, lightPositionZ));
+
+        //El objetivo al que apunta la luz esta a su misma altura pero negativa
+        //y media unidad de anchura por delante, de forma que la distancia focal no sea
+        //excesivamente grande
+        var lightTarget = new THREE.Object3D();
+        lightTarget.position.set(0,-lightPositionY, lightPositionZ*6);
+
+        var lightAngle = 30*Math.PI/180; //30 grados de iluminacion total
+        var distance = 200; //Distancia focal
+        this.headLight.setParameters(lightTarget,lightAngle,distance);
         this.eye.add(this.headLight);
     }
 

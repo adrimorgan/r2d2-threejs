@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 
 /**
- * Clase Light: permite crear luces ambientales
+ * Clase Light: wrapper que permite crear luces ambientales
  * y focales en funcion de parametros como el tipo,
- * color de luz, intensidad y posicion
+ * color de luz, intensidad y posicion. Ademas permite
+ * controlar el objetivo al que apunta, el angulo de vision
+ * y la distancia focal.
  */
 export default class Light extends THREE.Light{
 
@@ -30,11 +32,19 @@ export default class Light extends THREE.Light{
 
       //Por defecto crea una luz ambiental
       default:
-        console.log("AMBIENT");
         this.light = new THREE.AmbientLight({color:color, intensity:intensity});
         break;
       }
     this.add(this.light);
+  }
+
+  setParameters(target, angle, distance){
+
+    this.light.add(target);
+    this.light.target = target;
+    this.light.angle = angle;
+    this.light.distance = distance
+
   }
 
 }
