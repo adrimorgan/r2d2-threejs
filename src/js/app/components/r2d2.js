@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import torsoImg from '../../../public/assets/images/torso.png'
 import headImg from '../../../public/assets/images/head.png'
+import Light from "./Light";
 
 /**
  * Clase R2D2: modelo jerarquico de un robot parecido a
@@ -29,9 +30,15 @@ export default class R2D2 extends THREE.Object3D {
         this.rightShoulder = null;
         this.leftShoulder = null;
 
-        //Cuerpo, cabeza y vector direccion
+        //Cuerpo y cabeza
         this.body = null;
         this.head = null;
+        this.eye = null;
+        this.headLight = null;
+
+        //Vectores direccion del robot
+        this.forwardVector = null;
+        this.backwardVector = null;
 
         //Valores de referencia: alto y ancho
         this.armHeight = refHeight;
@@ -40,10 +47,8 @@ export default class R2D2 extends THREE.Object3D {
         this.bottomFootRadius = 0.3*refWidth;
         this.topFootRadius = 0.1*refWidth;
         this.footHeight = 0.3*refHeight;
-        this.directionVector = null;
 
-        //Variables de control del movimiento
-        this.stepSize = 10;
+        //Variable de control del movimiento
         this.rotationDegrees = (15 * Math.PI/180);
 
         //Variables de control de grados de libertad (los grados deben expresarse en radianes)
@@ -57,10 +62,39 @@ export default class R2D2 extends THREE.Object3D {
         this.minArmsScale = 1;
         this.maxArmsScale = 1.2;
 
-        //Creación
+        //Creación del robot
         this.createFeet();
         this.add(this.rightFoot);
         this.add(this.leftFoot);
+
+        //Creacion de las flechas que indican las direcciones
+        //forward y backward
+        this.createDirectionVectors();
+        this.add(this.forwardVector);
+        this.add(this.backwardVector);
+
+    }
+
+    createDirectionVectors(){
+
+        //Direccion de forward y backward vector
+        var forwardDir = new THREE.Vector3(0,0,10);
+        var backwardDir = new THREE.Vector3(0,0,-10)
+        //Normalizacion de vectores
+        forwardDir.normalize();
+        backwardDir.normalize();
+
+        //Vector origen a la altura del pecho del robot
+        var origin = new THREE.Vector3( 0, this.armHeight+this.footHeight, 0 );
+        var size = 10;
+        var color = 0xff0000;
+
+        //Creamos nuestros vectores direccion para poder mover al robot por la escena.
+        //No queremos que aparezcan en la escena asi que la visibilidad sera false
+        this.forwardVector = new THREE.ArrowHelper( forwardDir, origin, size, color );
+        this.backwardVector = new THREE.ArrowHelper( backwardDir, origin, size, color );
+        this.forwardVector.visible = false;
+        this.backwardVector.visible = false;
     }
 
     createFeet() {
@@ -178,15 +212,36 @@ export default class R2D2 extends THREE.Object3D {
             new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(headImg)}));
         this.head.position.y += 1.9 * this.shoulderWidth;
         this.head.rotation.y = 0;
-        var robotEye = new THREE.Mesh(new THREE.CylinderGeometry(this.shoulderWidth / 2, this.shoulderWidth / 2, this.shoulderWidth, 32, 32),
+
+        //Creamos el ojo del robot
+        this.eye = new THREE.Mesh(new THREE.CylinderGeometry(this.shoulderWidth / 2, this.shoulderWidth / 2, this.shoulderWidth, 32, 32),
             new THREE.MeshPhongMaterial({ color: 0xff0000, specular: 0x000eee, shininess: 70 }));
         this.head.castShadow = true;
-        robotEye.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
-        robotEye.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, this.bodyWidth / 4, this.bodyWidth / 2.5));
-        this.head.add(robotEye);
+        this.eye.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+        this.eye.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, this.bodyWidth / 4, 0));
+        this.eye.position.z = this.bodyWidth/2.5;
+        this.eye.rotation.y = 0;
+        //Creamos la luz que sale del ojo del robot
+        this.createHeadLight();
+        this.head.add(this.eye);
     }
 
-    computeKey(event, direction){
+    createHeadLight(){
+
+        // //Creamos la luz focal con un grado de inclinacion de 30º
+        // //sobre el ojo del robot, como si fuera una luz de casco de minero
+        // var lightPositionY = this.footHeight+this.armHeight + this.bodyWidth;
+        // var lightPositionZ = -10;
+        // this.headLight = new Light('spot',0xff0000,0.85, new THREE.Vector3(0,20,this.bodyWidth*20));
+        // var lightTarget = new THREE.Object3D();
+        // lightTarget.position.set(0, 20, -this.bodyWidth*20);
+        // this.headLight.light.target = lightTarget;
+        // this.eye.add(this.headLight);
+    }
+
+    computeKey(event){
+
+        //Realiza una accion en funcion del tipo de tecla pulsada
         switch(event.code){
             case 'KeyQ':    // rotar cabeza hacia la izquierda
                 if (this.head.rotation.y + 0.1 <= this.maxHeadRotation)
@@ -229,41 +284,33 @@ export default class R2D2 extends THREE.Object3D {
                 }
                 break;
 
-            // teclas referentes al movimiento
+            //Teclas que permiten mover al robot por la escena
             case 'ArrowUp':
-                var deltaX = Math.floor(Math.sin(this.rotation.y) * this.stepSize);
-                var deltaZ = Math.floor(Math.cos(this.rotation.y) * this.stepSize);
-                this.position.x -= Math.sign(this.rotation.y)*deltaX;
-                // if(this.rotation.y >= 0(JUGAR CON LOS PUTOS RADIANES PARA CONTROLAR LA MIRADA))
-                //     this.position.z -= deltaZ;
-                // else
-                   this.position.z -= Math.sign(this.rotation.y)*deltaZ;
-                console.log(this.rotation.y);
+                //Obtenemos las coordenadas de la punta del vector Forward
+                //y desplazamos el robot hacia esa posicion
+                var vector = new THREE.Vector3();
+                vector.setFromMatrixPosition(this.forwardVector.cone.matrixWorld);
+                this.position.x = vector.x;
+                this.position.z = vector.z;
                 break;
             case 'ArrowDown':
-                var deltaX = Math.floor(Math.sin(this.rotation.y) * this.stepSize);
-                var deltaZ = Math.floor(Math.cos(this.rotation.y) * this.stepSize);
-                this.position.x += Math.sign(this.rotation.y)*deltaX;
-                // if (this.rotation.y >= 0(JUGAR CON LOS PUTOS RADIANES PARA CONTROLAR LA MIRADA))
-                //     this.position.z += deltaZ;
-                // else
-                this.position.z += Math.sign(this.rotation.y)*deltaZ;
-                console.log(this.rotation.y);
+                //Obtenemos las coordenadas de la punta del vector Backward
+                //y desplazamos el robot hacia esa posicion
+                var vector = new THREE.Vector3();
+                vector.setFromMatrixPosition(this.backwardVector.cone.matrixWorld);
+                this.position.x = vector.x;
+                this.position.z = vector.z;
                 break;
             case 'ArrowLeft':
                 this.rotateY(this.rotationDegrees);
-                console.log(this.rotation.y);
+
                 break;
             case 'ArrowRight':
                 this.rotateY(-this.rotationDegrees);
-                console.log(this.rotation.y);
                 break;
         }
     }
 
-    animate(){
-        
-    }
 }
 
 
