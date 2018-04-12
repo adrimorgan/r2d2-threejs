@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as TrackballControls from 'three-trackballcontrols';
 import GameCourt from './components/GameCourt';
-import R2D2 from './components/r2d2';
+import R2D2 from './components/R2D2';
 import OVO from './components/ObjetoVolador';
 import metalImg from '../../public/assets/images/gameCourt.jpg';
 
@@ -60,7 +60,6 @@ export default class Scene extends THREE.Scene {
     //cada cierto intervalo de tiempo
     this.OVOS = new THREE.Object3D();
     this.add(this.OVOS);
-    this.timerOvoCreation = setInterval(this.createOvo, this.timeout);
   }
 
   /**
@@ -123,7 +122,6 @@ export default class Scene extends THREE.Scene {
 
   animate(){
     this.trackballControls.update();
-    this.robot.animate();
     this.animateOVOS();
   }
 

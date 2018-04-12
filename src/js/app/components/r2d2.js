@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import torsoImg from '../../../public/assets/images/torso.png'
+import headImg from '../../../public/assets/images/head.png'
 
 /**
  * Clase R2D2: modelo jerarquico de un robot parecido a
@@ -27,7 +29,7 @@ export default class R2D2 extends THREE.Object3D {
         this.rightShoulder = null;
         this.leftShoulder = null;
 
-        //Cuerpo y cabeza
+        //Cuerpo, cabeza y vector direccion
         this.body = null;
         this.head = null;
 
@@ -38,19 +40,20 @@ export default class R2D2 extends THREE.Object3D {
         this.bottomFootRadius = 0.3*refWidth;
         this.topFootRadius = 0.1*refWidth;
         this.footHeight = 0.3*refHeight;
+        this.directionVector = null;
 
         //Variables de control del movimiento
         this.stepSize = 10;
         this.rotationDegrees = (15 * Math.PI/180);
 
         //Variables de control de grados de libertad (los grados deben expresarse en radianes)
-            // La cabeza girará entre -80º y 80º (eje Y)
+        // La cabeza girará entre -80º y 80º (eje Y)
         this.minHeadRotation = (-80 * Math.PI/180);
         this.maxHeadRotation = (80 * Math.PI/180);
-            // El cuerpo se balanceará entre -45º y 30º (eje X)
+        // El cuerpo se balanceará entre -45º y 30º (eje X)
         this.minBodyRotation = (-45 * Math.PI/180);
         this.maxBodyRotation = (30 * Math.PI/180);
-            // Los brazos podrán escalarse (solo en eje Y) hasta un 20% más
+        // Los brazos podrán escalarse (solo en eje Y) hasta un 20% más
         this.minArmsScale = 1;
         this.maxArmsScale = 1.2;
 
@@ -155,12 +158,13 @@ export default class R2D2 extends THREE.Object3D {
         //se realice con respecto a estos
         this.body = new THREE.Mesh(
             new THREE.CylinderGeometry(this.bodyWidth / 2, this.bodyWidth / 2, this.armHeight + this.shoulderWidth, 32, 32),
-            new THREE.MeshPhongMaterial({ color: 0xc0c0c0, specular: 0x000eee, shininess: 70 }));
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(torsoImg) }));
         this.body.castShadow = true;
 
         //Trasladamos el cuerpo un poco mas abajo de la mitad de su altura para que
         //se ajuste mejor a los hombros
         this.body.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -this.footHeight, 0));
+        this.body.geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI/2.25));
         this.body.position.x = this.bodyWidth / 2 + this.shoulderWidth / 2;
         this.body.rotation.x = 0;
         this.createHead();
@@ -170,7 +174,8 @@ export default class R2D2 extends THREE.Object3D {
     createHead() {
         //Creamos la mitad de una esfera para la cabeza,
         //que tendrá una lente en el centro simulando un ojo
-        this.head = new THREE.Mesh(new THREE.SphereGeometry(this.bodyWidth / 2, 32, 32, 0, Math.PI * 2, 0, 0.5 * Math.PI), new THREE.MeshBasicMaterial({ color: 0x0000ff }));
+        this.head = new THREE.Mesh(new THREE.SphereGeometry(this.bodyWidth / 2, 32, 32, 0, Math.PI * 2, 0, 0.5 * Math.PI),
+            new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(headImg)}));
         this.head.position.y += 1.9 * this.shoulderWidth;
         this.head.rotation.y = 0;
         var robotEye = new THREE.Mesh(new THREE.CylinderGeometry(this.shoulderWidth / 2, this.shoulderWidth / 2, this.shoulderWidth, 32, 32),
@@ -181,7 +186,7 @@ export default class R2D2 extends THREE.Object3D {
         this.head.add(robotEye);
     }
 
-    computeKey(event){
+    computeKey(event, direction){
         switch(event.code){
             case 'KeyQ':    // rotar cabeza hacia la izquierda
                 if (this.head.rotation.y + 0.1 <= this.maxHeadRotation)
@@ -228,21 +233,21 @@ export default class R2D2 extends THREE.Object3D {
             case 'ArrowUp':
                 var deltaX = Math.floor(Math.sin(this.rotation.y) * this.stepSize);
                 var deltaZ = Math.floor(Math.cos(this.rotation.y) * this.stepSize);
-                this.position.x += deltaX;
-                // if(this.rotation.y >= (JUGAR CON LOS PUTOS RADIANES PARA CONTROLAR LA MIRADA))
+                this.position.x -= Math.sign(this.rotation.y)*deltaX;
+                // if(this.rotation.y >= 0(JUGAR CON LOS PUTOS RADIANES PARA CONTROLAR LA MIRADA))
                 //     this.position.z -= deltaZ;
                 // else
-                    this.position.z += deltaZ;
+                   this.position.z -= Math.sign(this.rotation.y)*deltaZ;
                 console.log(this.rotation.y);
                 break;
             case 'ArrowDown':
                 var deltaX = Math.floor(Math.sin(this.rotation.y) * this.stepSize);
                 var deltaZ = Math.floor(Math.cos(this.rotation.y) * this.stepSize);
-                this.position.x -= deltaX;
-                // if (this.rotation.y >= (JUGAR CON LOS PUTOS RADIANES PARA CONTROLAR LA MIRADA))
+                this.position.x += Math.sign(this.rotation.y)*deltaX;
+                // if (this.rotation.y >= 0(JUGAR CON LOS PUTOS RADIANES PARA CONTROLAR LA MIRADA))
                 //     this.position.z += deltaZ;
                 // else
-                this.position.z -= deltaZ;
+                this.position.z += Math.sign(this.rotation.y)*deltaZ;
                 console.log(this.rotation.y);
                 break;
             case 'ArrowLeft':
