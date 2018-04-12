@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import $ from 'jquery';
 import Scene from './app/Scene';
 
+
 function createRenderer(){
   var renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
   renderer.setClearColor(new THREE.Color(0x000000), 0); //background color
