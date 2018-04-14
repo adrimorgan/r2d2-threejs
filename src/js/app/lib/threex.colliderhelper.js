@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import './threex.collider';
 
 export var THREEx	= THREEx	|| {}
 
@@ -26,7 +27,7 @@ THREEx.ColliderHelper	= function( collider ){
  */
 THREEx.ColliderBox3Helper	= function( collider ){
 	// check argument
-	console.assert( collider instanceof THREEx.ColliderBox3 )
+	//console.assert( collider instanceof THREEx.ColliderBox3 )
 	// setup geometry/material
 	var geometry	= new THREE.BoxGeometry(1,1,1)
 	var material	= new THREE.MeshBasicMaterial({

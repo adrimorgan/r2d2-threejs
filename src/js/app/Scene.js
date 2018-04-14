@@ -64,12 +64,14 @@ export default class Scene extends THREE.Scene {
     //Sistema del control de colisiones
     this.colliders = [];
     this.colliderSystem = new ColliderSystem.THREEx.ColliderSystem();
-    this.colliderSystem.computeAndNotify(this.colliders);
 
     //Añadimos el objeto R2D2
     this.robot = new R2D2(20,14,1,1,1);
     this.add(this.robot);
-    this.robot.collider.addEventListener('contactEnter', this.computeCollisionRobot);
+    this.add(this.robot.colliderHelper);
+    this.robot.collider.addEventListener('contactEnter', function(){
+      console.log('joer comape');
+    })
     this.colliders.push(this.robot.collider);
 
     //Creamos la camara de primera persona
@@ -161,7 +163,7 @@ export default class Scene extends THREE.Scene {
     this.robot.computeKey(event);
   }
 
-  computeCollisionRobot(event){
+  computeCollision(event){
     console.log('colision --> ', event);
   }
 }

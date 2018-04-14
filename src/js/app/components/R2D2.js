@@ -81,6 +81,8 @@ export default class R2D2 extends THREE.Object3D {
         //Definición del bounding box para las colisiones
         this.boundingBox = new THREE.Box3().setFromObject(this);
         this.collider = new Collider.THREEx.ColliderBox3(this, this.boundingBox, 'positionScaleOnly');
+        this.colliderHelper = new ColliderHelper.THREEx.ColliderBox3Helper(this.collider);
+        this.add(this.colliderHelper);
     }
 
     createDirectionVectors(){
@@ -322,11 +324,16 @@ export default class R2D2 extends THREE.Object3D {
                 this.rotateY(-this.rotationDegrees);
                 break;
         }
+        this.boundingBox = new THREE.Box3().setFromObject(this);
+        this.collider.update();
+        this.colliderHelper.update();
     }
 
     animate() {
-        this.boundingBox = new THREE.Box3().setFromObject(this);
-        /*console.log(
+    }
+}
+
+/*console.log(
             "\n\n-- BOUNDING BOX ROBOT --",
             "\n- MIN: ",
             "\n   x: ", this.boundingBox.min.x,
@@ -337,23 +344,3 @@ export default class R2D2 extends THREE.Object3D {
             "\n   y: ", this.boundingBox.max.y,
             "\n   z: ", this.boundingBox.max.z
         );*/
-        this.collider.update();
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

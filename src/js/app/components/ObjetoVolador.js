@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 import * as Collider from "../lib/threex.collider";
+import * as ColliderHelper from "../lib/threex.colliderhelper";
+import * as ColliderSystem from "../lib/threex.collidersystem";
+import * as KeyboardState from "../lib/threex.keyboardstate";
 
 /**
  * Clase ObjetoVolador: representa un objeto volador de la escena.
@@ -36,15 +39,13 @@ export default class ObjetoVolador extends THREE.Object3D{
 
         //Definición del bounding box para las colisiones
         this.boundingBox = new THREE.Box3().setFromObject(this);
-        this.collider = new Collider.THREEx.ColliderBox3(this.OVO, this.boundingBox, 'positionScaleOnly');
-        this.collider.addEventListener('contactEnter', function (otherCollider) {
-            console.log('detectada colisión con objeto ', otherCollider.object3d.name)
-        });
+        this.collider = new Collider.THREEx.ColliderBox3(this, this.boundingBox, 'positionScaleOnly');
+        this.colliderHelper = new ColliderHelper.THREEx.ColliderBox3Helper(this.collider);
     }
 
     animate(){
         this.OVO.position.z -= this.velocidad;
-        this.boundingBox = new THREE.Box3().setFromObject(this);
         this.collider.update();
+        this.colliderHelper.update();
     }
 }

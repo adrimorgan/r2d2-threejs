@@ -112,11 +112,14 @@ THREEx.ColliderSystem	= function(){
 				var stateExisted= states[stateLabel] ? true : false
 				// process depending do Collide
 				if( doCollide ){
+					console.log('yes, I do collide');
 					// notify proper events
 					if( stateExisted === true ){
 						dispatchEvent(collider1, collider2, 'contactStay')
+						console.log('yes, I do collide STAY');
 					}else{
 						dispatchEvent(collider1, collider2, 'contactEnter')
+						console.log('yes, I do collide ENTER');
 					}
 					// update states
 					states[stateLabel]	= 'dummy'
