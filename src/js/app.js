@@ -19,21 +19,15 @@ function render () {
 }
 
 function computeKey(event){
-  if(event.code == 'KeyV'){
+  if(event.code == 'KeyV')
     scene.changeActiveCamera();
-  }
-
-
   scene.computeKey(event);
 }
 
 function createOvos(){
   scene.createOvo();
-
-  if(scene.countOvosBuCreated + scene.countOvosMaCreated >= scene.countOVOS){
-        console.log('OUT!!!');
-        window.clearInterval(intervalo);
-    }
+  if(scene.countOvosBuCreated + scene.countOvosMaCreated >= scene.countOVOS)
+    window.clearInterval(intervalo);
 }
 
 var renderer = createRenderer();

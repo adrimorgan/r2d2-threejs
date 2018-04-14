@@ -2,6 +2,10 @@ import * as THREE from 'three';
 import torsoImg from '../../../public/assets/images/torso.png'
 import headImg from '../../../public/assets/images/head.png'
 import Light from "./Light";
+import * as Collider from "../lib/threex.collider";
+import * as ColliderHelper from "../lib/threex.colliderhelper";
+import * as ColliderSystem from "../lib/threex.collidersystem";
+import * as KeyboardState from "../lib/threex.keyboardstate";
 
 /**
  * Clase R2D2: modelo jerarquico de un robot parecido a
@@ -74,20 +78,25 @@ export default class R2D2 extends THREE.Object3D {
         this.add(this.forwardVector);
         this.add(this.backwardVector);
 
+        //Definición del bounding box para las colisiones
+        this.collider = Collider.THREEx.Collider.createFromObject3d(this);
+
+        var onCollideEnter = this.collider.addEventListener('contactEnter', function(otherCollider){
+            console.log('joder compae ke me estrellao con ', otherCollider.id);
+        });
     }
 
     createDirectionVectors(){
-
         //Direccion de forward y backward vector
-        var forwardDir = new THREE.Vector3(0,0,10);
-        var backwardDir = new THREE.Vector3(0,0,-10)
+        var forwardDir = new THREE.Vector3(0,0,5);
+        var backwardDir = new THREE.Vector3(0,0,-5)
         //Normalizacion de vectores
         forwardDir.normalize();
         backwardDir.normalize();
 
         //Vector origen a la altura del pecho del robot
         var origin = new THREE.Vector3( 0, this.armHeight+this.footHeight, 0 );
-        var size = 10;
+        var size = 5;
         var color = 0xff0000;
 
         //Creamos nuestros vectores direccion para poder mover al robot por la escena.
@@ -204,6 +213,7 @@ export default class R2D2 extends THREE.Object3D {
         this.body.rotation.x = 0;
         this.createHead();
         this.body.add(this.head);
+        this.body.rotateX(-2*this.rotationDegrees);
     }
 
     createHead() {
@@ -224,10 +234,10 @@ export default class R2D2 extends THREE.Object3D {
         //Creamos la luz que sale del ojo del robot
         this.createHeadLight();
         this.head.add(this.eye);
+        this.head.rotateY(2*this.rotationDegrees);
     }
 
     createHeadLight(){
-
         //Creamos la luz focal con un grado de inclinacion de 30º
         //sobre el ojo del robot, como si fuera una luz de casco de minero
         var lightPositionY = this.footHeight+this.armHeight+this.bodyWidth;
@@ -247,7 +257,6 @@ export default class R2D2 extends THREE.Object3D {
     }
 
     computeKey(event){
-
         //Realiza una accion en funcion del tipo de tecla pulsada
         switch(event.code){
             case 'KeyQ':    // rotar cabeza hacia la izquierda
@@ -317,7 +326,6 @@ export default class R2D2 extends THREE.Object3D {
                 break;
         }
     }
-
 }
 
 

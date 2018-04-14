@@ -1,5 +1,5 @@
-import * as THREE from 'three'
-
+import * as THREE from 'three';
+import * as Collider from "../lib/threex.collider";
 
 /**
  * Clase ObjetoVolador: representa un objeto volador de la escena.
@@ -7,7 +7,6 @@ import * as THREE from 'three'
  * una velocidad de movimiento y una posicion inicial donde se crea el objeto
  */
 export default class ObjetoVolador extends THREE.Object3D{
-
 
     /**
      * Constructor de la clase
@@ -31,13 +30,15 @@ export default class ObjetoVolador extends THREE.Object3D{
 
         this.OVO.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,this.radioEsfera,0));
         this.OVO.position.x = this.posicionInicial.x;
+        this.OVO.position.y = 15;
         this.OVO.position.z = this.posicionInicial.z;
         this.add(this.OVO);
 
+        //Definición del bounding box para las colisiones
+        this.collider = Collider.THREEx.Collider.createFromObject3d(this);
     }
 
     animate(){
         this.OVO.position.z -= this.velocidad;
     }
-
 }

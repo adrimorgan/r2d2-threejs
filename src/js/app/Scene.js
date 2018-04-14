@@ -6,6 +6,10 @@ import OVO from './components/ObjetoVolador';
 import metalImg from '../../public/assets/images/gameCourt.jpg';
 import Light from "./components/Light";
 import Camera from "./components/Camera";
+import * as Collider from "./lib/threex.collider";
+import * as ColliderHelper from "./lib/threex.colliderhelper";
+import * as ColliderSystem from  "./lib/threex.collidersystem";
+import * as KeyboardState from "./lib/threex.keyboardstate";
 
 /**
  * Clase Scene: agrupa los elementos de
@@ -54,9 +58,14 @@ export default class Scene extends THREE.Scene {
     this.add(this.thirdPersonCamera);
     this.activeCamera = 'TPC';
 
+    //Sistema del control de colisiones
+    this.colliderSystem = new ColliderSystem.THREEx.ColliderSystem();
+    this.colliders = [];
+
     //Añadimos el objeto R2D2
     this.robot = new R2D2(20,14,1,1,1);
     this.add(this.robot);
+    this.colliders.push(this.robot.collider);
 
     //Creamos la camara de primera persona
     this.createFirstPersonCamera();
@@ -74,10 +83,8 @@ export default class Scene extends THREE.Scene {
    * y lo sitúa en el espacio con una dirección
    */
   createThirdPersonCamera (renderer) {
-
     var lookAt = new THREE.Vector3(0,0,50);
-    this.thirdPersonCamera = new Camera(75, window.innerWidth/window.innerHeight,1, 1000, new THREE.Vector3(0,50,-70),lookAt);
-
+    this.thirdPersonCamera = new Camera(75, window.innerWidth/window.innerHeight,1, 1000, new THREE.Vector3(0,80,-150),lookAt);
     this.trackballControls = new TrackballControls(this.thirdPersonCamera.camera, renderer);
     this.trackballControls.minDistance = 25;
     this.trackballControls.maxDistance = 250;
@@ -88,7 +95,6 @@ export default class Scene extends THREE.Scene {
   }
 
   createFirstPersonCamera(){
-
     var lookAt = new THREE.Vector3(0, this.robot.totalHeight-this.robot.bodyWidth*2,this.robot.bodyWidth*2);
     this.firstPersonCamera = new Camera(
         75,window.innerWidth/window.innerHeight,1,1000,
@@ -96,16 +102,14 @@ export default class Scene extends THREE.Scene {
   }
 
   createOvo(){
-
     if(this.countOvosMaCreated+this.countOvosBuCreated < this.countOVOS){
-
       var objectType =  'OvoMa';
       if(this.countOvosBuCreated < this.ovosBu)
         objectType = Math.random() <= 0.2 ? 'OvoBu':'OvoMa';
 
       if(this.countOvosBuCreated < this.ovosBu &&
-          this.countOVOS-(this.countOvosMaCreated+this.countOvosBuCreated) <= this.ovosBu){
-          objectType = 'OvoBu';
+        this.countOVOS-(this.countOvosMaCreated+this.countOvosBuCreated) <= this.ovosBu){
+        objectType = 'OvoBu';
       }
 
       objectType == 'OvoBu'? this.countOvosBuCreated+=1 : this.countOvosMaCreated+=1;
@@ -114,19 +118,18 @@ export default class Scene extends THREE.Scene {
       var position = new THREE.Vector3(positionX,0,positionZ);
       var velocidad = Math.random()+2;
 
-      this.OVOS.add(new OVO(objectType,velocidad,position));
+      var newOVO = new OVO(objectType, velocidad, position);
+      this.OVOS.add(newOVO);
+      this.colliders.push(newOVO);
     }
-
   }
 
   /**
    * Devuelve un objeto Camera para ser utilizado por el renderer
    */
   getActiveCamera(){
-
     if(this.activeCamera == 'TPC')
       return this.thirdPersonCamera.getCamera();
-
     else
       return this.firstPersonCamera.getCamera();
   }
@@ -137,7 +140,7 @@ export default class Scene extends THREE.Scene {
 
   animateOVOS(){
     this.OVOS.children.forEach(function(ovo){
-       ovo.animate();
+      ovo.animate();
     })
   }
 
@@ -147,7 +150,7 @@ export default class Scene extends THREE.Scene {
   }
 
   computeKey(event){
-      this.robot.updateMatrixWorld();
-      this.robot.computeKey(event);
+    this.robot.updateMatrixWorld();
+    this.robot.computeKey(event);
   }
 }
