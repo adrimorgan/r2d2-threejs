@@ -35,10 +35,16 @@ export default class ObjetoVolador extends THREE.Object3D{
         this.add(this.OVO);
 
         //Definición del bounding box para las colisiones
-        this.collider = Collider.THREEx.Collider.createFromObject3d(this);
+        this.boundingBox = new THREE.Box3().setFromObject(this);
+        this.collider = new Collider.THREEx.ColliderBox3(this.OVO, this.boundingBox, 'positionScaleOnly');
+        this.collider.addEventListener('contactEnter', function (otherCollider) {
+            console.log('detectada colisión con objeto ', otherCollider.object3d.name)
+        });
     }
 
     animate(){
         this.OVO.position.z -= this.velocidad;
+        this.boundingBox = new THREE.Box3().setFromObject(this);
+        this.collider.update();
     }
 }

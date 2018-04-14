@@ -49,8 +49,11 @@ export default class Scene extends THREE.Scene {
     //Objeto que representa la superficie
     var loader = new THREE.TextureLoader();
     var gameCourtTexture = loader.load(metalImg);
-    this.gameCourt = new GameCourt(this.gameCourtWidth,this.gameCourtLength, new THREE.MeshPhongMaterial(
-      {map:gameCourtTexture}));
+    this.gameCourt = new GameCourt(
+      this.gameCourtWidth,
+      this.gameCourtLength,
+      new THREE.MeshPhongMaterial( {map:gameCourtTexture} )
+    );
     this.add(this.gameCourt);
 
     //Camara de tercera persona (perspectiva)
@@ -59,8 +62,9 @@ export default class Scene extends THREE.Scene {
     this.activeCamera = 'TPC';
 
     //Sistema del control de colisiones
-    this.colliderSystem = new ColliderSystem.THREEx.ColliderSystem();
     this.colliders = [];
+    this.colliderSystem = new ColliderSystem.THREEx.ColliderSystem();
+    this.colliderSystem.computeAndNotify(this.colliders);
 
     //Añadimos el objeto R2D2
     this.robot = new R2D2(20,14,1,1,1);
@@ -120,7 +124,7 @@ export default class Scene extends THREE.Scene {
 
       var newOVO = new OVO(objectType, velocidad, position);
       this.OVOS.add(newOVO);
-      this.colliders.push(newOVO);
+      this.colliders.push(newOVO.collider);
     }
   }
 
@@ -146,7 +150,9 @@ export default class Scene extends THREE.Scene {
 
   animate(){
     this.trackballControls.update();
+    this.colliderSystem.computeAndNotify(this.colliders);
     this.animateOVOS();
+    this.robot.animate();
   }
 
   computeKey(event){

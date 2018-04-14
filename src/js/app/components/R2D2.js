@@ -79,10 +79,10 @@ export default class R2D2 extends THREE.Object3D {
         this.add(this.backwardVector);
 
         //Definición del bounding box para las colisiones
-        this.collider = Collider.THREEx.Collider.createFromObject3d(this);
-
-        var onCollideEnter = this.collider.addEventListener('contactEnter', function(otherCollider){
-            console.log('joder compae ke me estrellao con ', otherCollider.id);
+        this.boundingBox = new THREE.Box3().setFromObject(this);
+        this.collider = new Collider.THREEx.ColliderBox3(this, this.boundingBox, 'positionScaleOnly');
+        this.collider.addEventListener('contactEnter', function(otherCollider){
+            console.log('detectada colisión con objeto ', otherCollider.id);
         });
     }
 
@@ -325,6 +325,22 @@ export default class R2D2 extends THREE.Object3D {
                 this.rotateY(-this.rotationDegrees);
                 break;
         }
+    }
+
+    animate() {
+        this.boundingBox = new THREE.Box3().setFromObject(this);
+        /*console.log(
+            "\n\n-- BOUNDING BOX ROBOT --",
+            "\n- MIN: ",
+            "\n   x: ", this.boundingBox.min.x,
+            "\n   y: ", this.boundingBox.min.y,
+            "\n   z: ", this.boundingBox.min.z,
+            "\n- MAX: ",
+            "\n   x: ", this.boundingBox.max.x,
+            "\n   y: ", this.boundingBox.max.y,
+            "\n   z: ", this.boundingBox.max.z
+        );*/
+        this.collider.update();
     }
 }
 

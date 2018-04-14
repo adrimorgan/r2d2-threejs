@@ -36,5 +36,5 @@ var intervalo = window.setInterval(createOvos,scene.timeout);
 render();
 
 $(function() {
-    window.addEventListener('keydown', computeKey);
+  window.addEventListener('keydown', computeKey);
 });
