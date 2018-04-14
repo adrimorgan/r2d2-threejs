@@ -69,6 +69,7 @@ export default class Scene extends THREE.Scene {
     //Añadimos el objeto R2D2
     this.robot = new R2D2(20,14,1,1,1);
     this.add(this.robot);
+    this.robot.collider.addEventListener('contactEnter', this.computeCollisionRobot);
     this.colliders.push(this.robot.collider);
 
     //Creamos la camara de primera persona
@@ -158,5 +159,9 @@ export default class Scene extends THREE.Scene {
   computeKey(event){
     this.robot.updateMatrixWorld();
     this.robot.computeKey(event);
+  }
+
+  computeCollisionRobot(event){
+    console.log('colision --> ', event);
   }
 }

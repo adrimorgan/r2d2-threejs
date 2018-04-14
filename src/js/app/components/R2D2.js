@@ -81,9 +81,6 @@ export default class R2D2 extends THREE.Object3D {
         //Definición del bounding box para las colisiones
         this.boundingBox = new THREE.Box3().setFromObject(this);
         this.collider = new Collider.THREEx.ColliderBox3(this, this.boundingBox, 'positionScaleOnly');
-        this.collider.addEventListener('contactEnter', function(otherCollider){
-            console.log('detectada colisión con objeto ', otherCollider.id);
-        });
     }
 
     createDirectionVectors(){
