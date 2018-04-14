@@ -6,10 +6,6 @@ import OVO from './components/ObjetoVolador';
 import metalImg from '../../public/assets/images/gameCourt.jpg';
 import Light from "./components/Light";
 import Camera from "./components/Camera";
-import * as Collider from "./lib/threex.collider";
-import * as ColliderHelper from "./lib/threex.colliderhelper";
-import * as ColliderSystem from  "./lib/threex.collidersystem";
-import * as KeyboardState from "./lib/threex.keyboardstate";
 
 /**
  * Clase Scene: agrupa los elementos de
@@ -61,18 +57,9 @@ export default class Scene extends THREE.Scene {
     this.add(this.thirdPersonCamera);
     this.activeCamera = 'TPC';
 
-    //Sistema del control de colisiones
-    this.colliders = [];
-    this.colliderSystem = new ColliderSystem.THREEx.ColliderSystem();
-
     //Añadimos el objeto R2D2
     this.robot = new R2D2(20,14,1,1,1);
     this.add(this.robot);
-    this.add(this.robot.colliderHelper);
-    this.robot.collider.addEventListener('contactEnter', function(){
-      console.log('joer comape');
-    })
-    this.colliders.push(this.robot.collider);
 
     //Creamos la camara de primera persona
     this.createFirstPersonCamera();
@@ -127,7 +114,6 @@ export default class Scene extends THREE.Scene {
 
       var newOVO = new OVO(objectType, velocidad, position);
       this.OVOS.add(newOVO);
-      this.colliders.push(newOVO.collider);
     }
   }
 
@@ -153,7 +139,6 @@ export default class Scene extends THREE.Scene {
 
   animate(){
     this.trackballControls.update();
-    this.colliderSystem.computeAndNotify(this.colliders);
     this.animateOVOS();
     this.robot.animate();
   }
@@ -161,9 +146,5 @@ export default class Scene extends THREE.Scene {
   computeKey(event){
     this.robot.updateMatrixWorld();
     this.robot.computeKey(event);
-  }
-
-  computeCollision(event){
-    console.log('colision --> ', event);
   }
 }

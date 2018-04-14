@@ -2,10 +2,6 @@ import * as THREE from 'three';
 import torsoImg from '../../../public/assets/images/torso.png'
 import headImg from '../../../public/assets/images/head.png'
 import Light from "./Light";
-import * as Collider from "../lib/threex.collider";
-import * as ColliderHelper from "../lib/threex.colliderhelper";
-import * as ColliderSystem from "../lib/threex.collidersystem";
-import * as KeyboardState from "../lib/threex.keyboardstate";
 
 /**
  * Clase R2D2: modelo jerarquico de un robot parecido a
@@ -77,12 +73,6 @@ export default class R2D2 extends THREE.Object3D {
         this.createDirectionVectors();
         this.add(this.forwardVector);
         this.add(this.backwardVector);
-
-        //Definición del bounding box para las colisiones
-        this.boundingBox = new THREE.Box3().setFromObject(this);
-        this.collider = new Collider.THREEx.ColliderBox3(this, this.boundingBox, 'positionScaleOnly');
-        this.colliderHelper = new ColliderHelper.THREEx.ColliderBox3Helper(this.collider);
-        this.add(this.colliderHelper);
     }
 
     createDirectionVectors(){
@@ -324,23 +314,9 @@ export default class R2D2 extends THREE.Object3D {
                 this.rotateY(-this.rotationDegrees);
                 break;
         }
-        this.boundingBox = new THREE.Box3().setFromObject(this);
-        this.collider.update();
-        this.colliderHelper.update();
     }
 
     animate() {
+        
     }
 }
-
-/*console.log(
-            "\n\n-- BOUNDING BOX ROBOT --",
-            "\n- MIN: ",
-            "\n   x: ", this.boundingBox.min.x,
-            "\n   y: ", this.boundingBox.min.y,
-            "\n   z: ", this.boundingBox.min.z,
-            "\n- MAX: ",
-            "\n   x: ", this.boundingBox.max.x,
-            "\n   y: ", this.boundingBox.max.y,
-            "\n   z: ", this.boundingBox.max.z
-        );*/
