@@ -34,8 +34,10 @@ export default class Scene extends THREE.Scene {
     this.countOvosMaCreated = 0;
     this.countOvosBuCreated = 0;
     this.pausedGame = false;
+    this.endedGame = false;
     this.colliders = [];
     this.raycaster = new THREE.Raycaster();
+    this.idListener = 0;
 
     //Luz ambiental de la escena
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
@@ -143,7 +145,19 @@ export default class Scene extends THREE.Scene {
   }
 
   pauseGame(){
-    this.pausedGame = (this.pausedGame) ? false : true;
+    if(this.pausedGame){
+      this.pausedGame = false;
+      document.getElementById('juego-en-pausa').style.display = 'none';
+    } else {
+      this.pausedGame = true;
+      document.getElementById('juego-en-pausa').style.display = 'initial';
+    }
+  }
+
+  endGame(){
+    this.pauseGame();
+    this.endedGame = true;
+    document.getElementById('juego-en-pausa').textContent = 'JUEGO TERMINADO';
   }
 
   animateOVOS(){
@@ -159,7 +173,14 @@ export default class Scene extends THREE.Scene {
       this.animateOVOS();
       this.searchCollisions();
       if((this.robot.energy <= 0) || (!this.checkRobotInsideCourt()))
-        this.pauseGame();
+        this.endGame();
+      document.getElementById('energia').textContent = this.robot.energy;
+      if(this.robot.energy >= 50)
+        document.getElementById('barra-energia').style.backgroundColor = 'green';
+      else if(this.robot.energy < 50 && this.robot.energy >= 30)
+        document.getElementById('barra-energia').style.backgroundColor = 'orange';
+      else //if(this.robot.energy <= 30)
+        document.getElementById('barra-energia').style.backgroundColor = 'red';
     }
   }
 
@@ -172,7 +193,7 @@ export default class Scene extends THREE.Scene {
     );
   }
 
-  computeKey(event){
+  computeKey(event) {
     this.robot.updateMatrixWorld();
     this.robot.computeKey(event);
   }

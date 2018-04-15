@@ -323,6 +323,7 @@ export default class R2D2 extends THREE.Object3D {
                 var pointsNumber = Math.floor(Math.random()*5);
                 this.gamePoints += pointsNumber;
                 this.energy += (5 - pointsNumber);
+                document.getElementById('puntos').textContent = this.gamePoints;
                 break;
             case 'OvoMa':
                 this.energy -= 10;

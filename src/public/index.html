@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <title>R2D2 - the Game</title>
     <style>
       body {
@@ -12,9 +13,41 @@
         background-repeat: no-repeat;
         background-position: center;
       }
+      #helper {
+        position: absolute;
+      }
+      #barra-energia {
+        background-color: green;
+        width: 300px;
+        height: 30px;
+        border-style: solid;
+        border-width: 2px;
+        border-color: white;
+        border-bottom-right-radius: 20px;
+      }
+      .texto {
+        font-size: 30px;
+        color: white;
+        font-weight: bold;
+        width: 500px;
+      }
+      #juego-en-pausa {
+        padding: 50px;
+        background-color: white;
+        color: black;
+        border-radius: 5px;
+        z-index: 50;
+        display: none;
+      }
     </style>
   </head>
   <body>
+    <div class="helper">
+      <div id="barra-energia"></div>
+      <p class="texto">Energía: <span id="energia">100</span></p>
+      <p class="texto">Puntos: <span id="puntos">0</span></p>
+    </div>
+    <div id="juego-en-pausa" class="w3-display-middle">JUEGO EN PAUSA</div>
     <script type="text/javascript" src="./assets/js/app.js"></script>
   </body>
 </html>
