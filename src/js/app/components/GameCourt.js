@@ -11,7 +11,7 @@ export default class GameCourt extends THREE.Object3D {
 
         //Datos miembro
         this.width = aWidth;
-        this.height = 0.2
+        this.height = 0.2;
         this.depth = aDepth;
         this.material = material;
 
@@ -20,7 +20,6 @@ export default class GameCourt extends THREE.Object3D {
             new THREE.BoxGeometry(this.width, this.height, this.depth),
             this.material
         );
-        this.ground.applyMatrix(new THREE.Matrix4().makeTranslation(0, 0, (this.depth/2 - this.width/2)));
         this.ground.receiveShadow = true;
         this.ground.matrixAutoUpdate = false;
         this.add(this.ground);

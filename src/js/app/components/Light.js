@@ -16,35 +16,23 @@ export default class Light extends THREE.Light{
      * @param intensity Intensidad de la luz entre 0 y 1
      * @param position Posicion en coordenadas del mundo
      */
-  constructor(lightType, color = 0xffffff, intensity = 0.85, position){
+  constructor(color = 0xffffff, intensity = 0.85, position){
     super();
-
-    switch (lightType) {
-      case 'spot':
-        this.light = new THREE.SpotLight(color);
-        position = (position === undefined ? new THREE.Vector3(0,15,20) : position);
-        this.light.position.set(position.x,position.y, position.z);
-        this.light.castShadow = true;
-        this.light.shadow.mapSize.width = 1024;
-        this.light.shadow.mapSize.height = 1024;
-        this.light.intensity = intensity;
-        break;
-
-      //Por defecto crea una luz ambiental
-      default:
-        this.light = new THREE.AmbientLight({color:color, intensity:intensity});
-        break;
-      }
+    this.light = new THREE.SpotLight(color);
+    position = (position === undefined ? new THREE.Vector3(0,15,20) : position);
+    this.light.position.set(position.x,position.y, position.z);
+    this.light.castShadow = true;
+    this.light.shadow.mapSize.width = 1024;
+    this.light.shadow.mapSize.height = 1024;
+    this.light.intensity = intensity;
     this.add(this.light);
   }
 
   setParameters(target, angle, distance){
-
     this.light.add(target);
     this.light.target = target;
     this.light.angle = angle;
     this.light.distance = distance
-
   }
 
 }

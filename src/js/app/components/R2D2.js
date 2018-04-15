@@ -14,11 +14,8 @@ export default class R2D2 extends THREE.Object3D {
     /**
      * @param refHeight altura de referencia de los brazos
      * @param refWidth anchura de referencia del cuerpo
-     * @param alpha angulo balanceo (35º hacia delante, 45º hacia atras
-     * @param beta angulo giro de la cabeza (80º como maximo)
-     * @param gamma escalado de brazos no mayor del 20% de la altura original
      */
-    constructor(refHeight, refWidth, alpha, beta, gamma){
+    constructor(refHeight, refWidth, position){
         super();
 
         //Partes del cuerpo
@@ -36,7 +33,7 @@ export default class R2D2 extends THREE.Object3D {
         this.eye = null;
         this.headLight = null;
 
-        //Vectores direccion del robot
+        //Vectores dirección del robot
         this.forwardVector = null;
         this.backwardVector = null;
 
@@ -63,6 +60,10 @@ export default class R2D2 extends THREE.Object3D {
         this.minArmsScale = 1;
         this.maxArmsScale = 1.2;
 
+        //Variables del juego (energía y puntos)
+        this.energy = 100;
+        this.gamePoints = 0;
+
         //Creación del robot
         this.createFeet();
         this.add(this.rightFoot);
@@ -73,10 +74,12 @@ export default class R2D2 extends THREE.Object3D {
         this.createDirectionVectors();
         this.add(this.forwardVector);
         this.add(this.backwardVector);
+
+        this.position.z = position.z;
     }
 
     createDirectionVectors(){
-        //Direccion de forward y backward vector
+        //dirección de forward y backward vector
         var forwardDir = new THREE.Vector3(0,0,5);
         var backwardDir = new THREE.Vector3(0,0,-5)
         //Normalizacion de vectores
@@ -88,7 +91,7 @@ export default class R2D2 extends THREE.Object3D {
         var size = 5;
         var color = 0xff0000;
 
-        //Creamos nuestros vectores direccion para poder mover al robot por la escena.
+        //Creamos nuestros vectores dirección para poder mover al robot por la escena.
         //No queremos que aparezcan en la escena asi que la visibilidad sera false
         this.forwardVector = new THREE.ArrowHelper( forwardDir, origin, size, color );
         this.backwardVector = new THREE.ArrowHelper( backwardDir, origin, size, color );
@@ -101,20 +104,18 @@ export default class R2D2 extends THREE.Object3D {
         this.rightFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.bottomFootRadius, this.footHeight, 32, 32, 1),
             new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0x000eee, shininess: 70 }));
-        this.rightFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, this.footHeight / 2, 0));
+        this.rightFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(-(this.bodyWidth + this.shoulderWidth) / 2, this.footHeight / 2, 0));
         this.rightFoot.castShadow = true;
         this.rightFoot.matrixAutoUpdate = false;
-        this.rightFoot.position.x -= (this.bodyWidth + this.shoulderWidth) / 2;
         this.rightFoot.updateMatrix();
 
         //Creación del pie izauierdo: lo trasladamos tambien en el eje X
         this.leftFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.bottomFootRadius, this.footHeight, 32, 32, 1),
             new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0x000eee, shininess: 70 }));
-        this.leftFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(this.bodyWidth + this.shoulderWidth, this.footHeight / 2, 0));
+        this.leftFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation((this.bodyWidth + this.shoulderWidth)/2, this.footHeight / 2, 0));
         this.leftFoot.castShadow = true;
         this.leftFoot.matrixAutoUpdate = false;
-        this.leftFoot.position.x -= (this.bodyWidth + this.shoulderWidth) / 2;
         this.leftFoot.updateMatrix();
 
         //Creación de los brazos: serán añadidos como hijos de esta geometria
@@ -130,7 +131,7 @@ export default class R2D2 extends THREE.Object3D {
             new THREE.CylinderGeometry(this.topFootRadius, this.topFootRadius, this.armHeight),
             new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x000eee, shininess: 70 }));
 
-        this.rightArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, this.armHeight / 2, 0));
+        this.rightArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(-(this.bodyWidth + this.shoulderWidth) / 2, this.armHeight / 2, 0));
         this.rightArm.castShadow = true;
         this.rightArm.matrixAutoUpdate = false;
         this.rightArm.position.y = this.footHeight;
@@ -141,7 +142,7 @@ export default class R2D2 extends THREE.Object3D {
             new THREE.CylinderGeometry(this.topFootRadius, this.topFootRadius, this.armHeight),
             new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x000eee, shininess: 70 }));
 
-        this.leftArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(this.bodyWidth + this.shoulderWidth, this.armHeight / 2, 0));
+        this.leftArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation((this.bodyWidth + this.shoulderWidth) / 2, this.armHeight / 2, 0));
         this.leftArm.castShadow = true;
         this.leftArm.matrixAutoUpdate = false;
         this.leftArm.position.y = this.footHeight;
@@ -161,7 +162,7 @@ export default class R2D2 extends THREE.Object3D {
             new THREE.BoxGeometry(this.shoulderWidth, this.shoulderWidth, this.shoulderWidth),
             new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0x000eee, shininess: 70 }));
 
-        this.rightShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, this.shoulderWidth * 0.5, 0));
+        this.rightShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(-(this.bodyWidth + this.shoulderWidth) / 2, this.shoulderWidth * 0.5, 0));
         //Trasladarlo justo encima del brazo
         this.rightShoulder.castShadow = true;
         this.rightShoulder.matrixAutoUpdate = false;
@@ -173,7 +174,7 @@ export default class R2D2 extends THREE.Object3D {
             new THREE.BoxGeometry(this.shoulderWidth, this.shoulderWidth, this.shoulderWidth),
             new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0x000eee, shininess: 70 }));
 
-        this.leftShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(this.bodyWidth + this.shoulderWidth, this.bodyWidth * 0.1, 0));
+        this.leftShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation((this.bodyWidth + this.shoulderWidth) / 2, this.bodyWidth * 0.1, 0));
         //Trasladarlo justo encima del brazo
         this.leftShoulder.castShadow = true;
         this.leftShoulder.matrixAutoUpdate = false;
@@ -198,7 +199,6 @@ export default class R2D2 extends THREE.Object3D {
         //se ajuste mejor a los hombros
         this.body.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -this.footHeight, 0));
         this.body.geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI/2.25));
-        this.body.position.x = this.bodyWidth / 2 + this.shoulderWidth / 2;
         this.body.rotation.x = 0;
         this.createHead();
         this.body.add(this.head);
@@ -231,7 +231,7 @@ export default class R2D2 extends THREE.Object3D {
         //sobre el ojo del robot, como si fuera una luz de casco de minero
         var lightPositionY = this.footHeight+this.armHeight+this.bodyWidth;
         var lightPositionZ = this.bodyWidth/2;
-        this.headLight = new Light('spot',0xff0000,1.5, new THREE.Vector3(0,lightPositionY, lightPositionZ));
+        this.headLight = new Light(0xff0000, 1.5, new THREE.Vector3(0, lightPositionY, lightPositionZ));
 
         //El objetivo al que apunta la luz esta a su misma altura pero negativa
         //y media unidad de anchura por delante, de forma que la distancia focal no sea
@@ -291,32 +291,44 @@ export default class R2D2 extends THREE.Object3D {
 
             //Teclas que permiten mover al robot por la escena
             case 'ArrowUp':
-                //Obtenemos las coordenadas de la punta del vector Forward
-                //y desplazamos el robot hacia esa posicion
                 var vector = new THREE.Vector3();
                 vector.setFromMatrixPosition(this.forwardVector.cone.matrixWorld);
                 this.position.x = vector.x;
                 this.position.z = vector.z;
+                this.energy -= 1;
                 break;
             case 'ArrowDown':
-                //Obtenemos las coordenadas de la punta del vector Backward
-                //y desplazamos el robot hacia esa posicion
                 var vector = new THREE.Vector3();
                 vector.setFromMatrixPosition(this.backwardVector.cone.matrixWorld);
                 this.position.x = vector.x;
                 this.position.z = vector.z;
+                this.energy -= 1;
                 break;
             case 'ArrowLeft':
                 this.rotateY(this.rotationDegrees);
-
+                this.energy -= 1;
                 break;
             case 'ArrowRight':
                 this.rotateY(-this.rotationDegrees);
+                this.energy -= 1;
+                break;
+            default:
                 break;
         }
     }
 
-    animate() {
-        
+    handleCollision(type){
+        switch(type){
+            case 'OvoBu':
+                var pointsNumber = Math.floor(Math.random()*5);
+                this.gamePoints += pointsNumber;
+                this.energy += (5 - pointsNumber);
+                break;
+            case 'OvoMa':
+                this.energy -= 10;
+                break;
+            default:
+                break;
+        }
     }
 }

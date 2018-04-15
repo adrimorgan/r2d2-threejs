@@ -21,10 +21,13 @@ function render () {
 function computeKey(event){
   if(event.code == 'KeyV')
     scene.changeActiveCamera();
-  scene.computeKey(event);
+  else if(event.code == 'Space') //barra espaciadora
+    scene.pauseGame();
+  else if(!scene.pausedGame)
+    scene.computeKey(event);
 }
 
-function createOvos(){
+function createOvo(){
   scene.createOvo();
   if(scene.countOvosBuCreated + scene.countOvosMaCreated >= scene.countOVOS)
     window.clearInterval(intervalo);
@@ -32,7 +35,7 @@ function createOvos(){
 
 var renderer = createRenderer();
 var scene = new Scene(renderer.domElement);
-var intervalo = window.setInterval(createOvos,scene.timeout);
+var intervalo = window.setInterval(createOvo, scene.timeout);
 render();
 
 $(function() {

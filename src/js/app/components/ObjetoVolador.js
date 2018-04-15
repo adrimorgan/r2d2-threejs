@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import GreenTexture from '../../../public/assets/images/green.jpg';
+import RedTexture from '../../../public/assets/images/lava.jpg';
 
 /**
  * Clase ObjetoVolador: representa un objeto volador de la escena.
@@ -13,28 +15,42 @@ export default class ObjetoVolador extends THREE.Object3D{
      * @param velocidad velocidad de movimiento entre 0 y 1
      * @param posicionInicial posicion (x,y,z) desde la que parte
      */
-    constructor(tipoObjeto, velocidad, posicionInicial, radioEsfera= 3){
+    constructor(tipoObjeto, minX, maxX, minZ, maxZ, finalTablero, radioEsfera=6){
         super();
-
-        this.OVO = null;
-        this.radioEsfera = radioEsfera;
         this.tipoObjeto = tipoObjeto;
-        this.color = this.tipoObjeto == 'OvoBu' ? 0x00ff00 : 0xff0000;
-        this.velocidad = velocidad;
-        this.posicionInicial = posicionInicial;
+        this.radioEsfera = radioEsfera;
+        this.finalTablero = finalTablero;
+        this.minX = minX;
+        this.maxX = maxX;
+        this.minZ = minZ;
+        this.maxZ = maxZ;
+        this.castShadow = true;
+
+        var loader = new THREE.TextureLoader();
+        this.textura = (this.tipoObjeto == 'OvoBu') ? 
+            loader.load(GreenTexture) : 
+            loader.load(RedTexture);
         this.OVO = new THREE.Mesh(
-            new THREE.SphereGeometry(radioEsfera,32,32),
-            new THREE.MeshPhongMaterial({color: this.color, specular: this.color, shininess : 0.8})
+            new THREE.SphereGeometry(radioEsfera, 16, 16),
+            new THREE.MeshPhongMaterial({ map: this.textura })
         );
 
-        this.OVO.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,this.radioEsfera,0));
-        this.OVO.position.x = this.posicionInicial.x;
-        this.OVO.position.y = 15;
-        this.OVO.position.z = this.posicionInicial.z;
+        this.OVO.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, this.radioEsfera + 15, 0));
+        this.ubicarAleatoriamente();
         this.add(this.OVO);
     }
 
+    ubicarAleatoriamente(){
+        this.OVO.position.x = Math.floor(this.minX + Math.random() * this.maxX);
+        this.OVO.position.z = Math.floor(this.minZ + Math.random() * (this.maxZ-this.minZ));
+        this.velocidad = 1 + Math.random() * 2;
+        this.haColisionado = false;
+    }
+
     animate(){
-        this.OVO.position.z -= this.velocidad;
+        if (this.OVO.position.z > this.finalTablero)
+            this.OVO.position.z -= this.velocidad;
+        else
+            this.ubicarAleatoriamente();
     }
 }
