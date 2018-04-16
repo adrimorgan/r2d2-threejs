@@ -164,7 +164,7 @@ export default class Scene extends THREE.Scene {
     })
   }
 
-  animate(){
+  animate(controls){
     if(!this.pausedGame){
       if (this.activeCamera == 'TPC')
         this.trackballControls.update();
@@ -179,6 +179,7 @@ export default class Scene extends THREE.Scene {
         document.getElementById('barra-energia').style.backgroundColor = 'orange';
       else //if(this.robot.energy <= 30)
         document.getElementById('barra-energia').style.backgroundColor = 'red';
+      this.robot.animate(controls);
     }
   }
 
