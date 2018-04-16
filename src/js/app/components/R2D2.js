@@ -63,7 +63,7 @@ export default class R2D2 extends THREE.Object3D {
         this.maxArmsScale = 1.2;
 
         //Variables del juego (energía y puntos)
-        this.energy = 300;
+        this.energy = 100;
         this.gamePoints = 0;
 
         //Creación del robot

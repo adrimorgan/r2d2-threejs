@@ -55,8 +55,10 @@ export default class ObjetoVolador extends THREE.Object3D{
 
         // se reubica el OVO al principio del tablero (quizás con nueva
         // dificultad)
-        if (this.OVO.position.z > this.finalTablero)
+        if (this.OVO.position.z > this.finalTablero){
             this.OVO.position.z -= this.velocidad;
+            this.OVO.rotateY(Math.PI/180);
+        }
         else
             this.ubicarAleatoriamente();
     }
