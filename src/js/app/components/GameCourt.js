@@ -6,6 +6,12 @@ import * as THREE from 'three';
  */
 export default class GameCourt extends THREE.Object3D {
 
+    /**
+     * Constructor de la clase
+     * @param aWidth ancho del terreno de juego
+     * @param aDepth profundidad del terreno de juego
+     * @param material tipo de material o textura
+     */
     constructor(aWidth, aDepth, material){
         super();
 

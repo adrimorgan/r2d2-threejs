@@ -28,6 +28,12 @@ export default class Light extends THREE.Light{
     this.add(this.light);
   }
 
+    /**
+     * Setter de la clase
+     * @param target objetivo al que apunta la luz
+     * @param angle angulo de vision en radianes
+     * @param distance distancia maxima hasta donde brilla la luz
+     */
   setParameters(target, angle, distance){
     this.light.add(target);
     this.light.target = target;
