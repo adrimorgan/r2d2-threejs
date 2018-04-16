@@ -13,17 +13,18 @@
         background-repeat: no-repeat;
         background-position: center;
       }
-      #helper {
-        position: absolute;
-      }
       #barra-energia {
         background-color: green;
-        width: 300px;
-        height: 30px;
+        float: left;
+        width: 30px;
+        height: 300px;
         border-style: solid;
         border-width: 2px;
         border-color: white;
         border-bottom-right-radius: 20px;
+      }
+      #parametros-juego {
+        float: right;
       }
       .texto {
         font-size: 30px;
@@ -42,10 +43,12 @@
     </style>
   </head>
   <body>
-    <div class="helper">
+    <div class="w3-display-topleft">
       <div id="barra-energia"></div>
-      <p class="texto">Energía: <span id="energia">100</span></p>
-      <p class="texto">Puntos: <span id="puntos">0</span></p>
+      <div id="parametros-juego">
+        <p class="texto">Energía: <span id="energia">100</span></p>
+        <p class="texto">Puntos: <span id="puntos">0</span></p>
+      </div>
     </div>
     <div id="juego-en-pausa" class="w3-display-middle">JUEGO EN PAUSA</div>
     <script type="text/javascript" src="./assets/js/app.js"></script>
