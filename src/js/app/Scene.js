@@ -36,8 +36,6 @@ export default class Scene extends THREE.Scene {
     this.pausedGame = false;
     this.endedGame = false;
     this.colliders = [];
-    this.raycaster = new THREE.Raycaster();
-    this.idListener = 0;
 
     //Luz ambiental de la escena
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
@@ -229,3 +227,7 @@ export default class Scene extends THREE.Scene {
     }
   }
 }
+
+Scene.EasyMode = 0;
+Scene.MediumMode = 1;
+Scene.HardMode = 2;
