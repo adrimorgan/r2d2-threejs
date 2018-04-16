@@ -15,6 +15,10 @@ import Camera from "./components/Camera";
  */
 export default class Scene extends THREE.Scene {
 
+  /**
+   * Constructor de la clase
+   * @param {*} renderer objeto en el que se renderiza la escena en el navegador
+   */
   constructor(renderer){
     super();
 
@@ -42,13 +46,13 @@ export default class Scene extends THREE.Scene {
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     this.add(this.ambientLight);
 
-    //Luces focales de la escena
+    //Luces focales de la escena (una en cada esquina)
     this.sceneSpotlight = new Light(0xffffff, 0.6, new THREE.Vector3(-150, 300, 400));
     this.add(this.sceneSpotlight);
     this.sceneSpotlight2 = new Light(0xffffff, 0.3, new THREE.Vector3(150, 100, -400));
     this.add(this.sceneSpotlight2);
 
-    //Objeto que representa la superficie
+    //Objeto que representa la superficie de juego
     var loader = new THREE.TextureLoader();
     var gameCourtTexture = loader.load(metalImg);
     this.gameCourt = new GameCourt(
@@ -58,27 +62,25 @@ export default class Scene extends THREE.Scene {
     );
     this.add(this.gameCourt);
 
-    //Camara de tercera persona (perspectiva)
+    // Cámara en tercera persona (perspectiva)
     this.createThirdPersonCamera(renderer);
     this.add(this.thirdPersonCamera);
     this.activeCamera = 'TPC';
 
-    //Añadimos el objeto R2D2
+    // Modelo del robot R2D2
     this.robot = new R2D2(20,14,new THREE.Vector3(0,0,(-this.gameCourtLength/2)+20));
     this.add(this.robot);
 
-    //Creamos la camara de primera persona
+    //Creamos la cámara en primera persona
     this.createFirstPersonCamera();
     this.robot.head.add(this.firstPersonCamera);
 
-    //Los objetos voladores se crearán
-    //cada cierto intervalo de tiempo
+    //Los objetos voladores se crearán cada cierto intervalo de tiempo
     this.OVOS = new THREE.Object3D();
     this.add(this.OVOS);
   }
 
   /**
-   * Metodo createCamara
    * Crea un objeto de tipo cámara en perspectiva
    * y lo sitúa en el espacio con una dirección
    */
@@ -94,6 +96,10 @@ export default class Scene extends THREE.Scene {
     this.trackballControls.target = lookAt;
   }
 
+  /**
+   * Crea una cámara en primera persona situada en la
+   * cabeza del robot
+   */
   createFirstPersonCamera(){
     var lookAt = new THREE.Vector3(0, this.robot.totalHeight-this.robot.bodyWidth*2,this.robot.bodyWidth*2);
     this.firstPersonCamera = new Camera(
@@ -106,6 +112,10 @@ export default class Scene extends THREE.Scene {
     );
   }
 
+  /**
+   * Calcula el número de objetos voladores que deben crearse
+   * e itera hasta este número distribuyéndolos por la escena
+   */
   createOvo(){
     if(this.countOvosMaCreated+this.countOvosBuCreated < this.countOVOS){
       var objectType =  'OvoMa';
@@ -139,10 +149,18 @@ export default class Scene extends THREE.Scene {
       return this.firstPersonCamera.getCamera();
   }
 
+  /**
+   * Cambia las cámaras activas entre la de primera y de tercera persona
+   */
   changeActiveCamera(){
     this.activeCamera = (this.activeCamera == 'TPC'? 'FPC': 'TPC');
   }
 
+  /**
+   * Se acciona un pausado completo del juego hasta deshacer la pausa.
+   * Durante este tiempo, el robot no puede moverse, los OVOs no se animan
+   * ni cambian de posición.
+   */
   pauseGame(){
     if(this.pausedGame){
       this.pausedGame = false;
@@ -153,12 +171,20 @@ export default class Scene extends THREE.Scene {
     }
   }
 
+  /**
+   * Al salirse del tablero o al quedarse el robot sin energía, el juego finaliza.
+   * Al recargar la ventana se crea una partida nueva.
+   */
   endGame(){
     this.pauseGame();
     this.endedGame = true;
     document.getElementById('juego-en-pausa').textContent = 'JUEGO TERMINADO';
   }
 
+  /**
+   * Por cada OVO, se dispara su animación, donde pueden alterar su posición y/o
+   * velocidad.
+   */
   animateOVOS(){
     var i = this.hardnessMode;
     this.OVOS.children.forEach(function(ovo){
@@ -166,6 +192,12 @@ export default class Scene extends THREE.Scene {
     })
   }
 
+  /**
+   * En cada frame de refresco, se comprueba interacción de teclado, si hay pausa
+   * o finalización del juego; y se actualizan las variables de pantalla (valor y
+   * colores de barra de energía).
+   * @param {*} controls parámetros numéricos recibidos de la interfaz de datGUI
+   */
   animate(controls){
     if(!this.pausedGame){
       if (this.activeCamera == 'TPC')
@@ -183,6 +215,7 @@ export default class Scene extends THREE.Scene {
 
       // Actualizar barra de energía
       document.getElementById('energia').textContent = this.robot.energy;
+      document.getElementById('barra-energia').style.height = this.robot.energy*3 + 'px';
       if(this.robot.energy >= 50)
         document.getElementById('barra-energia').style.backgroundColor = 'green';
       else if(this.robot.energy < 50 && this.robot.energy >= 30)
@@ -195,6 +228,10 @@ export default class Scene extends THREE.Scene {
     }
   }
 
+  /**
+   * Comprueba que el robot nunca sobrepasa los límites del plano (centrado en 
+   * el origen).
+   */
   checkRobotInsideCourt(){
     return (
       (this.robot.position.x >= -(this.gameCourtWidth/2))
@@ -204,14 +241,20 @@ export default class Scene extends THREE.Scene {
     );
   }
 
+  /**
+   * Las entradas de teclado podrán pausar el juego, cambiar la cámara o mover
+   * al robot por la escena.
+   * @param {*} event evento recibido desde teclado, en el que leer la tecla
+   */
   computeKey(event) {
     this.robot.updateMatrixWorld();
     this.robot.computeKey(event);
   }
 
   searchCollisions(){
-    //A partir de que tengamos al menos un objeto colisionable, buscamos
-    //el espacio cercano al robot en busca de posibles colisiones
+    /** A partir de que tengamos al menos un objeto colisionable, buscamos
+     * el espacio cercano al robot en busca de posibles colisiones
+     */
     if (this.colliders.length > 1) {
 
       //Obtenemos el punto de origen del cuerpo del robot
@@ -228,13 +271,18 @@ export default class Scene extends THREE.Scene {
         var ray = new THREE.Raycaster(origin, directionVector.clone().normalize());
         var collisionResults = ray.intersectObjects(this.colliders);
 
+        /** Si el tamaño del vector es mayor que 0, significa que un objeto ha colisionado con 
+         * el robot, sea bueno o malo, lo que deriva en cambios de puntos y/o energía; 
+         */
         if (collisionResults.length > 0 && collisionResults[0].distance < (1+this.robot.bodyWidth/2)
            && !(collisionResults[0].object.parent.haColisionado)) {
           finished = true;
           collisionResults[0].object.parent.haColisionado = true;
           this.robot.handleCollision(collisionResults[0].object.parent.tipoObjeto);
 
-          // Ajustes de dificultad
+          /** Ajustes de dificultad: los avances positivos del jugador derivan en dificultades en el
+           * juego: aumentos de velocidad o disminución de la visibilidad.
+           */
           if(this.robot.gamePoints >= 5 && this.robot.gamePoints < 10)
             this.hardnessMode = 2;
           else if(this.robot.gamePoints >= 10 && this.robot.gamePoints < 15){
@@ -245,6 +293,9 @@ export default class Scene extends THREE.Scene {
           else if(this.robot.gamePoints >= 15)
             this.hardnessMode = 4;
         }
+        /**
+         * Si no hay colisión, no se incrementa la dificultad para los OVOs reubicados
+         */
         else
           this.hardnessMode = 0;
       }
