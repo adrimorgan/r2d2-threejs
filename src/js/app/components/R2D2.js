@@ -16,6 +16,7 @@ export default class R2D2 extends THREE.Object3D {
     /**
      * @param refHeight altura de referencia de los brazos
      * @param refWidth anchura de referencia del cuerpo
+     * @param position Coordenada Z de situacion en el plano
      */
     constructor(refHeight, refWidth, position){
         super();
@@ -80,6 +81,11 @@ export default class R2D2 extends THREE.Object3D {
         this.position.z = position.z;
     }
 
+    /**
+     * Metodo que crea los vectores directores
+     * que utilizará el robot como referencia para
+     * desplazarse hacia adelante y hacia atras.
+     */
     createDirectionVectors(){
         //dirección de forward y backward vector
         var forwardDir = new THREE.Vector3(0,0,5);
@@ -101,6 +107,10 @@ export default class R2D2 extends THREE.Object3D {
         this.backwardVector.visible = false;
     }
 
+    /**
+     * Metodo para crear los pies del robot. Cada
+     * brazo colgara jerarquicamente de cada pie
+     */
     createFeet() {
         //Creación del pie derecho y traslacion para apoyarlo sobre el plano X
         this.rightFoot = new THREE.Mesh(
@@ -126,6 +136,11 @@ export default class R2D2 extends THREE.Object3D {
         this.leftFoot.add(this.leftArm);
     }
 
+    /**
+     * Metodo que crea los brazos del robot. Cada hombro
+     * colgara de su respectivo brazo de forma que permita
+     * desplazarlos cuando el brazo suba o baje.
+     */
     createArms() {
         //Creación del brazo derecho y traslacion para apoyarlo sobre el eje y posteriormente a
         //la altura del pie que le corresponda
@@ -157,6 +172,12 @@ export default class R2D2 extends THREE.Object3D {
         this.leftFoot.add(this.leftShoulder);
     }
 
+    /**
+     * Metodo que crea los hombros. El cuerpo entero colgará de
+     * uno de los dos hombros, de forma que el cuerpo suba o baje
+     * en funcion del movimiento de los hombros cuando son elevados
+     * por los brazos.
+     */
     createShoulders() {
         //Creamos el hombro derecho y lo situamos sobre el plano X y posteriomente lo
         //desplazamos hasta estar encima del brazo
@@ -188,6 +209,11 @@ export default class R2D2 extends THREE.Object3D {
         this.rightShoulder.add(this.body);
     }
 
+    /**
+     * Metodo que crea el cuerpo del robot. De éste colgará la
+     * cabeza del robot, de forma que a esta última le afecten
+     * las transformaciones que se apliquen sobre el cuerpo.
+     */
     createBody() {
         //Creación del cuerpo del robot: el eje de coordenadas del cuerpo
         //estará situado a la altura de los hombros, de forma que la rotacion
@@ -207,6 +233,11 @@ export default class R2D2 extends THREE.Object3D {
         this.body.rotateX(-2*this.rotationDegrees);
     }
 
+    /**
+     * Metodo que crea la cabeza del robot, que tiene a su vez
+     * un ojo en medio de ésta. Al ser hija del cuerpo, se ve
+     * afectada por las transformaciones del mismo.
+     */
     createHead() {
         //Creamos la mitad de una esfera para la cabeza,
         //que tendrá una lente en el centro simulando un ojo
@@ -228,6 +259,11 @@ export default class R2D2 extends THREE.Object3D {
         this.head.rotateY(2*this.rotationDegrees);
     }
 
+    /**
+     * Metodo que crea la luz de la cabeza del robot.
+     * Este elemento cuelga de la cabeza de forma que se vea
+     * afectado por las transformaciones aplicadas.
+     */
     createHeadLight(){
         //Creamos la luz focal con un grado de inclinacion de 30º
         //sobre el ojo del robot, como si fuera una luz de casco de minero
@@ -247,6 +283,12 @@ export default class R2D2 extends THREE.Object3D {
         this.eye.add(this.headLight);
     }
 
+    /**
+     * Metodo que detecta los eventos de teclado
+     * para controlar el movimiento del robot por
+     * el campo de juego
+     * @param event Evento de teclado
+     */
     computeKey(event){
         //Realiza una accion en funcion del tipo de tecla pulsada
         switch(event.code){
@@ -277,14 +319,21 @@ export default class R2D2 extends THREE.Object3D {
         }
     }
 
+    /**
+     * Metodo que gestiona las colisiones del robot
+     * con los objetos voladores de la escena
+     * @param type 'OvoBu' o 'OvoMa'
+     */
     handleCollision(type){
         switch(type){
+            //Aumenta puntos y/o energia del robot
             case 'OvoBu':
                 var pointsNumber = Math.floor(Math.random()*5);
                 this.gamePoints += pointsNumber;
                 this.energy += (5 - pointsNumber);
                 document.getElementById('puntos').textContent = this.gamePoints;
                 break;
+            //Disminuye la energia del robot
             case 'OvoMa':
                 this.energy -= 10;
                 break;
@@ -293,10 +342,17 @@ export default class R2D2 extends THREE.Object3D {
         }
     }
 
+    /**
+     * Metodo que controla la animacion del robot.
+     * @param controls Elementos del GUI que controlan
+     * los grados de libertad del robot
+     */
     animate(controls){
+        //Rotacion de la cabeza y cuerpo
         this.head.rotation.y = (controls.headRotation * Math.PI/180);
         this.body.rotation.x = (controls.bodyRotation * Math.PI/180);
 
+        //Movimiento de subir y bajar del robot
         this.rightArm.scale.y = controls.armsLength/100;
         this.rightArm.updateMatrix();
         this.rightShoulder.position.y = ((this.armHeight + this.shoulderWidth + (this.shoulderWidth * 0.5)) * controls.armsLength/100);

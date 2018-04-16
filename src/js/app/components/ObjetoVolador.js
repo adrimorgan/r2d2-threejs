@@ -11,9 +11,13 @@ export default class ObjetoVolador extends THREE.Object3D{
 
     /**
      * Constructor de la clase
-     * @param tipoObjeto cadena OvoBu u OvoMa
-     * @param velocidad velocidad de movimiento entre 0 y 1
-     * @param posicionInicial posicion (x,y,z) desde la que parte
+     * @param tipoObjeto 'OvoBu' o 'OvoMa'
+     * @param minX Coordenada de localizacion X minima
+     * @param maxX Coordenada de localizacion X maxima
+     * @param minZ Coordenada de localizacion Z minima
+     * @param maxZ Coordenada de localizacion Z maxima
+     * @param finalTablero Coordenadas de final de tablero
+     * @param radioEsfera radio del objeto voladora
      */
     constructor(tipoObjeto, minX, maxX, minZ, maxZ, finalTablero, radioEsfera=6){
         super();
@@ -41,6 +45,10 @@ export default class ObjetoVolador extends THREE.Object3D{
         this.add(this.OVO);
     }
 
+    /**
+     * Metodo que permite ubicar al objeto volador
+     * de forma aleatoria dentro del campo de juego
+     */
     ubicarAleatoriamente(){
         this.OVO.position.x = Math.floor(this.minX + Math.random() * this.maxX);
         this.OVO.position.z = Math.floor(this.minZ + Math.random() * (this.maxZ-this.minZ));
@@ -48,6 +56,11 @@ export default class ObjetoVolador extends THREE.Object3D{
         this.haColisionado = false;
     }
 
+    /**
+     * Metodo que controla la animacion de los objetos
+     * voladores en funcion del modo de dificultad
+     * @param hardnessMode modo de dificultad
+     */
     animate(hardnessMode){
         // si ha cambiado la dificultad, se incrementa la velocidad
         if(hardnessMode != 0)
