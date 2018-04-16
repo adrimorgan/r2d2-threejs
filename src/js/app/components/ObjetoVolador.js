@@ -24,6 +24,7 @@ export default class ObjetoVolador extends THREE.Object3D{
         this.maxX = maxX;
         this.minZ = minZ;
         this.maxZ = maxZ;
+        this.cteDificultad = 1;
         this.castShadow = true;
 
         var loader = new THREE.TextureLoader();
@@ -43,11 +44,17 @@ export default class ObjetoVolador extends THREE.Object3D{
     ubicarAleatoriamente(){
         this.OVO.position.x = Math.floor(this.minX + Math.random() * this.maxX);
         this.OVO.position.z = Math.floor(this.minZ + Math.random() * (this.maxZ-this.minZ));
-        this.velocidad = 1 + Math.random() * 2;
+        this.velocidad = this.cteDificultad + Math.random() * 2;
         this.haColisionado = false;
     }
 
-    animate(){
+    animate(hardnessMode){
+        // si ha cambiado la dificultad, se incrementa la velocidad
+        if(hardnessMode != 0)
+            this.cteDificultad = hardnessMode;
+
+        // se reubica el OVO al principio del tablero (quizás con nueva
+        // dificultad)
         if (this.OVO.position.z > this.finalTablero)
             this.OVO.position.z -= this.velocidad;
         else
