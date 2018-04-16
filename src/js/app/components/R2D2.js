@@ -1,6 +1,8 @@
 import * as THREE from 'three';
-import torsoImg from '../../../public/assets/images/torso.png'
-import headImg from '../../../public/assets/images/head.png'
+import armsImg from '../../../public/assets/images/military.jpeg'
+import headImg from '../../../public/assets/images/gold.jpg'
+import bootsImg from '../../../public/assets/images/boots.png'
+import blueGlass from '../../../public/assets/images/blueGlass2.jpg'
 import Light from "./Light";
 
 /**
@@ -103,7 +105,7 @@ export default class R2D2 extends THREE.Object3D {
         //Creación del pie derecho y traslacion para apoyarlo sobre el plano X
         this.rightFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.bottomFootRadius, this.footHeight, 32, 32, 1),
-            new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0x000eee, shininess: 70 }));
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(bootsImg) }));
         this.rightFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(-(this.bodyWidth + this.shoulderWidth) / 2, this.footHeight / 2, 0));
         this.rightFoot.castShadow = true;
         this.rightFoot.matrixAutoUpdate = false;
@@ -112,7 +114,7 @@ export default class R2D2 extends THREE.Object3D {
         //Creación del pie izauierdo: lo trasladamos tambien en el eje X
         this.leftFoot = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.bottomFootRadius, this.footHeight, 32, 32, 1),
-            new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0x000eee, shininess: 70 }));
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(bootsImg) }));
         this.leftFoot.geometry.applyMatrix(new THREE.Matrix4().makeTranslation((this.bodyWidth + this.shoulderWidth)/2, this.footHeight / 2, 0));
         this.leftFoot.castShadow = true;
         this.leftFoot.matrixAutoUpdate = false;
@@ -129,7 +131,7 @@ export default class R2D2 extends THREE.Object3D {
         //la altura del pie que le corresponda
         this.rightArm = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.topFootRadius, this.armHeight),
-            new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x000eee, shininess: 70 }));
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(bootsImg) }));
 
         this.rightArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(-(this.bodyWidth + this.shoulderWidth) / 2, this.armHeight / 2, 0));
         this.rightArm.castShadow = true;
@@ -140,7 +142,7 @@ export default class R2D2 extends THREE.Object3D {
         //Creación del brazo izquierdo de la misma forma
         this.leftArm = new THREE.Mesh(
             new THREE.CylinderGeometry(this.topFootRadius, this.topFootRadius, this.armHeight),
-            new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x000eee, shininess: 70 }));
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(bootsImg) }));
 
         this.leftArm.geometry.applyMatrix(new THREE.Matrix4().makeTranslation((this.bodyWidth + this.shoulderWidth) / 2, this.armHeight / 2, 0));
         this.leftArm.castShadow = true;
@@ -160,7 +162,7 @@ export default class R2D2 extends THREE.Object3D {
         //desplazamos hasta estar encima del brazo
         this.rightShoulder = new THREE.Mesh(
             new THREE.BoxGeometry(this.shoulderWidth, this.shoulderWidth, this.shoulderWidth),
-            new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0x000eee, shininess: 70 }));
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(armsImg) }));
 
         this.rightShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(-(this.bodyWidth + this.shoulderWidth) / 2, this.shoulderWidth * 0.5, 0));
         //Trasladarlo justo encima del brazo
@@ -172,7 +174,7 @@ export default class R2D2 extends THREE.Object3D {
         //Hombro derecho
         this.leftShoulder = new THREE.Mesh(
             new THREE.BoxGeometry(this.shoulderWidth, this.shoulderWidth, this.shoulderWidth),
-            new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0x000eee, shininess: 70 }));
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(armsImg) }));
 
         this.leftShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation((this.bodyWidth + this.shoulderWidth) / 2, this.shoulderWidth * 0.5, 0));
         //Trasladarlo justo encima del brazo
@@ -192,7 +194,7 @@ export default class R2D2 extends THREE.Object3D {
         //se realice con respecto a estos
         this.body = new THREE.Mesh(
             new THREE.CylinderGeometry(this.bodyWidth / 2, this.bodyWidth / 2, this.armHeight + this.shoulderWidth, 32, 32),
-            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(torsoImg) }));
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(armsImg) }));
         this.body.castShadow = true;
 
         //Trasladamos el cuerpo un poco mas abajo de la mitad de su altura para que
@@ -215,7 +217,7 @@ export default class R2D2 extends THREE.Object3D {
 
         //Creamos el ojo del robot
         this.eye = new THREE.Mesh(new THREE.CylinderGeometry(this.shoulderWidth / 2, this.shoulderWidth / 2, this.shoulderWidth, 32, 32),
-            new THREE.MeshPhongMaterial({ color: 0xff0000, specular: 0x000eee, shininess: 70 }));
+            new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load(blueGlass) }));
         this.head.castShadow = true;
         this.eye.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
         this.eye.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, this.bodyWidth / 4, this.bodyWidth/2.5));
@@ -231,7 +233,7 @@ export default class R2D2 extends THREE.Object3D {
         //sobre el ojo del robot, como si fuera una luz de casco de minero
         var lightPositionY = this.footHeight+this.armHeight+this.bodyWidth;
         var lightPositionZ = this.bodyWidth/2;
-        this.headLight = new Light(0xff0000, 1.5, new THREE.Vector3(0, lightPositionY, lightPositionZ));
+        this.headLight = new Light(0x0000ff, 2.0, new THREE.Vector3(0, lightPositionY, lightPositionZ));
 
         //El objetivo al que apunta la luz esta a su misma altura pero negativa
         //y media unidad de anchura por delante, de forma que la distancia focal no sea
