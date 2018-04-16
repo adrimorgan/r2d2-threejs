@@ -174,7 +174,7 @@ export default class R2D2 extends THREE.Object3D {
             new THREE.BoxGeometry(this.shoulderWidth, this.shoulderWidth, this.shoulderWidth),
             new THREE.MeshPhongMaterial({ color: 0x0000ff, specular: 0x000eee, shininess: 70 }));
 
-        this.leftShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation((this.bodyWidth + this.shoulderWidth) / 2, this.bodyWidth * 0.1, 0));
+        this.leftShoulder.geometry.applyMatrix(new THREE.Matrix4().makeTranslation((this.bodyWidth + this.shoulderWidth) / 2, this.shoulderWidth * 0.5, 0));
         //Trasladarlo justo encima del brazo
         this.leftShoulder.castShadow = true;
         this.leftShoulder.matrixAutoUpdate = false;
@@ -248,48 +248,6 @@ export default class R2D2 extends THREE.Object3D {
     computeKey(event){
         //Realiza una accion en funcion del tipo de tecla pulsada
         switch(event.code){
-            case 'KeyQ':    // rotar cabeza hacia la izquierda
-                if (this.head.rotation.y + 0.1 <= this.maxHeadRotation)
-                    this.head.rotation.y += 0.1;
-                break;
-            case 'KeyW':    // rotar cabeza hacia la derecha
-                if (this.head.rotation.y - 0.1 >= this.minHeadRotation)
-                    this.head.rotation.y -= 0.1;
-                break;
-            case 'KeyA':    // balancear cuerpo hacia atrás
-                if (this.body.rotation.x + 0.1 <= this.maxBodyRotation)
-                    this.body.rotation.x += 0.1;
-                break;
-            case 'KeyS':    // balancear cuerpo hacia adelante
-                if (this.body.rotation.x - 0.1 >= this.minBodyRotation)
-                    this.body.rotation.x -= 0.1;
-                break;
-            case 'KeyZ':    // disminuir escala brazos
-                if (this.rightArm.scale.y - 0.05 >= this.minArmsScale) {
-                    this.rightArm.scale.y -= 0.05;
-                    this.rightArm.updateMatrix();
-                    this.rightShoulder.position.y -= (0.05 * this.armHeight);
-                    this.rightShoulder.updateMatrix();
-                    this.leftArm.scale.y -= 0.05;
-                    this.leftArm.updateMatrix();
-                    this.leftShoulder.position.y -= (0.05 * this.armHeight);
-                    this.leftShoulder.updateMatrix();
-                }
-                break;
-            case 'KeyX':    // aumentar escala brazos
-                if (this.rightArm.scale.y + 0.05 <= this.maxArmsScale) {
-                    this.rightArm.scale.y += 0.05;
-                    this.rightArm.updateMatrix();
-                    this.rightShoulder.position.y += (0.05 * this.armHeight);
-                    this.rightShoulder.updateMatrix();
-                    this.leftArm.scale.y += 0.05;
-                    this.leftArm.updateMatrix();
-                    this.leftShoulder.position.y += (0.05 * this.armHeight);
-                    this.leftShoulder.updateMatrix();
-                }
-                break;
-
-            //Teclas que permiten mover al robot por la escena
             case 'ArrowUp':
                 var vector = new THREE.Vector3();
                 vector.setFromMatrixPosition(this.forwardVector.cone.matrixWorld);
@@ -331,5 +289,20 @@ export default class R2D2 extends THREE.Object3D {
             default:
                 break;
         }
+    }
+
+    animate(controls){
+        this.head.rotation.y = (controls.headRotation * Math.PI/180);
+        this.body.rotation.x = (controls.bodyRotation * Math.PI/180);
+
+        this.rightArm.scale.y = controls.armsLength/100;
+        this.rightArm.updateMatrix();
+        this.rightShoulder.position.y = ((this.armHeight + this.shoulderWidth + (this.shoulderWidth * 0.5)) * controls.armsLength/100);
+        this.rightShoulder.updateMatrix();
+
+        this.leftArm.scale.y = controls.armsLength/100;
+        this.leftArm.updateMatrix();
+        this.leftShoulder.position.y = ((this.armHeight + this.shoulderWidth + (this.shoulderWidth * 0.5)) * controls.armsLength / 100);
+        this.leftShoulder.updateMatrix();
     }
 }
