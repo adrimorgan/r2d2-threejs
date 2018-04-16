@@ -36,8 +36,6 @@ export default class Scene extends THREE.Scene {
     this.pausedGame = false;
     this.endedGame = false;
     this.colliders = [];
-    this.raycaster = new THREE.Raycaster();
-    this.idListener = 0;
 
     //Luz ambiental de la escena
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
@@ -220,7 +218,6 @@ export default class Scene extends THREE.Scene {
         if (collisionResults.length > 0 && collisionResults[0].distance < (1+this.robot.bodyWidth/2)
            && !(collisionResults[0].object.parent.haColisionado)) {
           finished = true;
-          //this.colliders.splice(this.colliders.indexOf(collisionResults[0].object), 1);
           collisionResults[0].object.parent.haColisionado = true;
           this.robot.handleCollision(collisionResults[0].object.parent.tipoObjeto);
         }
