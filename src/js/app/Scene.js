@@ -36,6 +36,7 @@ export default class Scene extends THREE.Scene {
     this.pausedGame = false;
     this.endedGame = false;
     this.colliders = [];
+    this.hardnessMode = 0;
 
     //Luz ambiental de la escena
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
@@ -159,8 +160,9 @@ export default class Scene extends THREE.Scene {
   }
 
   animateOVOS(){
+    var i = this.hardnessMode;
     this.OVOS.children.forEach(function(ovo){
-      ovo.animate();
+      ovo.animate(i);
     })
   }
 
@@ -168,17 +170,27 @@ export default class Scene extends THREE.Scene {
     if(!this.pausedGame){
       if (this.activeCamera == 'TPC')
         this.trackballControls.update();
+
+      // Avanzar OVOs por la escena
       this.animateOVOS();
+
+      // Detectar colisiones entre OVOs y robot
       this.searchCollisions();
+
+      // Condición: final del juego
       if((this.robot.energy <= 0) || (!this.checkRobotInsideCourt()))
         this.endGame();
+
+      // Actualizar barra de energía
       document.getElementById('energia').textContent = this.robot.energy;
       if(this.robot.energy >= 50)
         document.getElementById('barra-energia').style.backgroundColor = 'green';
       else if(this.robot.energy < 50 && this.robot.energy >= 30)
         document.getElementById('barra-energia').style.backgroundColor = 'orange';
-      else //if(this.robot.energy <= 30)
+      else //if(this.robot.energy < 30)
         document.getElementById('barra-energia').style.backgroundColor = 'red';
+
+      // Grados de libertad del robot en functión de dat.GUI
       this.robot.animate(controls);
     }
   }
@@ -221,12 +233,21 @@ export default class Scene extends THREE.Scene {
           finished = true;
           collisionResults[0].object.parent.haColisionado = true;
           this.robot.handleCollision(collisionResults[0].object.parent.tipoObjeto);
+
+          // Ajustes de dificultad
+          if(this.robot.gamePoints >= 5 && this.robot.gamePoints < 10)
+            this.hardnessMode = 2;
+          else if(this.robot.gamePoints >= 10 && this.robot.gamePoints < 15){
+            this.hardnessMode = 3;
+            this.sceneSpotlight.visible = false;
+            this.sceneSpotlight2.visible = false;
+          }
+          else if(this.robot.gamePoints >= 15)
+            this.hardnessMode = 4;
         }
+        else
+          this.hardnessMode = 0;
       }
     }
   }
 }
-
-Scene.EasyMode = 0;
-Scene.MediumMode = 1;
-Scene.HardMode = 2;
