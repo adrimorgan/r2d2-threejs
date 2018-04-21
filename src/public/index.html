@@ -44,6 +44,14 @@
         z-index: 50;
         display: none;
       }
+      #controles {
+        padding: 20px;
+        padding-top: 5px;
+        text-align: center;
+        background-color: black;
+        color: white;
+        font-size: 75%;
+      }
     </style>
   </head>
   <body>
@@ -52,12 +60,19 @@
         <div id="barra-energia" class="barra">
         </div>
       </div>
-      <div id="parametros-juego w3-display-topleft">
-        <p class="texto">Energía: <span id="energia">100</span></p>
-        <p class="texto">Puntos: <span id="puntos">0</span></p>
+      <div id="parametros-juego" class="w3-display-topleft">
+        <p class="texto">Health: <span id="energia">100</span></p>
+        <p class="texto">Points: <span id="puntos">0</span></p>
       </div>
     </div>
-    <div id="juego-en-pausa" class="w3-display-middle">JUEGO EN PAUSA</div>
+    <div id="controles" class="w3-display-topmiddle">
+      <p>Arrows: robot movement</p>
+      <p>Spacebar: pause game</p>
+      <p>Left click + mov.: rotate camera</p>
+      <p>Right click + mov.: move camera</p>
+      <p>V: change first/third person camera</p>
+    </div>
+    <div id="juego-en-pausa" class="w3-display-middle">PAUSED GAME</div>
     <script type="text/javascript" src="./assets/js/app.js"></script>
   </body>
 </html>

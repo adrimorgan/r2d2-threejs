@@ -178,7 +178,7 @@ export default class Scene extends THREE.Scene {
   endGame(){
     this.pauseGame();
     this.endedGame = true;
-    document.getElementById('juego-en-pausa').textContent = 'JUEGO TERMINADO';
+    document.getElementById('juego-en-pausa').textContent = ('End of the game.\nPoints: ' + this.robot.gamePoints);
   }
 
   /**
