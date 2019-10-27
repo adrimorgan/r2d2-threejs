@@ -7,6 +7,8 @@ import metalImg from '../../public/assets/images/gameCourt.jpg';
 import Light from "./components/Light";
 import Camera from "./components/Camera";
 
+const ObjetoVolador = { "bueno": 1, "malo": 2};
+
 /**
  * Clase Scene: agrupa los elementos de
  * iluminacion, una camara simple y un objeto
@@ -118,14 +120,14 @@ export default class Scene extends THREE.Scene {
    */
   createOvo(){
     if(this.countOvosMaCreated+this.countOvosBuCreated < this.countOVOS){
-      var objectType =  'OvoMa';
+      var objectType =  ObjetoVolador.malo;
       if(this.countOvosBuCreated < this.ovosBu)
-        objectType = Math.random() <= 0.2 ? 'OvoBu':'OvoMa';
+        objectType = Math.random() <= 0.2 ? ObjetoVolador.bueno:ObjetoVolador.malo;
 
       if(this.countOvosBuCreated < this.ovosBu && this.countOVOS-(this.countOvosMaCreated+this.countOvosBuCreated) <= this.ovosBu)
-        objectType = 'OvoBu';
+        objectType = ObjetoVolador.bueno;
 
-      objectType == 'OvoBu' ? this.countOvosBuCreated+=1 : this.countOvosMaCreated+=1;
+      objectType == ObjetoVolador.bueno ? this.countOvosBuCreated+=1 : this.countOvosMaCreated+=1;
       var newOVO = new OVO(
         objectType, 
         -(this.gameCourtWidth/2), 
