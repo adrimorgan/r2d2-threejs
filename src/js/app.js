@@ -3,7 +3,7 @@ import $ from 'jquery';
 import dat from 'dat.gui';
 import Scene from './app/Scene';
 
-var GUIcontrols = null;
+let GUIcontrols = null;
 
 /**
  * Funcion que crea la interfaz grafica para controlar
@@ -18,12 +18,12 @@ function createGUI(){
 
   //Elementos de la GUI para controlar los grados de libertad
   //del robot
-  var gui = new dat.GUI();
-  var headRotationFolder = gui.addFolder('Rotación cabeza');
+  let gui = new dat.GUI();
+  let headRotationFolder = gui.addFolder('Rotación cabeza');
   headRotationFolder.add(GUIcontrols, 'headRotation', -80, 80, 1).name('Valor:');
-  var bodyRotationFolder = gui.addFolder('Rotación cuerpo');
+  let bodyRotationFolder = gui.addFolder('Rotación cuerpo');
   bodyRotationFolder.add(GUIcontrols, 'bodyRotation', -45, 30, 1).name('Valor:');
-  var armsLengthFolder = gui.addFolder('Longitud brazos');
+  let armsLengthFolder = gui.addFolder('Longitud brazos');
   armsLengthFolder.add(GUIcontrols, 'armsLength', 100, 120, 1).name('Valor:');
 }
 
@@ -32,7 +32,7 @@ function createGUI(){
  * @returns {WebGLRenderer}
  */
 function createRenderer(){
-  var renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+  let renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
   renderer.setClearColor(new THREE.Color(0x000000), 0); //color de fondo
   renderer.setSize( window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
@@ -79,13 +79,13 @@ function createOvo(){
     window.clearInterval(intervalo);
 }
 
-var renderer = createRenderer();
-var scene = new Scene(renderer.domElement);
-var intervalo = window.setInterval(createOvo, scene.timeout);
+let renderer = createRenderer();
+let scene = new Scene(renderer.domElement);
+let intervalo = window.setInterval(createOvo, scene.timeout);
 createGUI();
 render();
 
 $(function() {
-  var idListener = window.addEventListener('keydown', computeKey);
+  let idListener = window.addEventListener('keydown', computeKey);
   scene.idListener = idListener;
 });
